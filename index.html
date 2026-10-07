@@ -113,6 +113,7 @@ const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
 const EV={};E.forEach(e=>EV[e[0]]={ch:e[1],t:e[2],o:e[3],s:e[4],cat:CAT[e[1]][0]});
 W4.forEach((w,wi)=>w.st.forEach((st,n)=>st.forEach((o,i)=>EV['w'+wi+n+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,cat:CAT[o[0]][n%2]})));
 /* ---------- audio ---------- */
+/* ---------- audio ---------- */
 let AC, mg;
 const VO = {
   det: [330, .03, 'triangle'],
@@ -132,6 +133,9 @@ function audio() {
     mg = AC.createGain();
     mg.gain.value = s.mute ? 0 : 1;
     mg.connect(AC.destination);
+    
+    // Start background ambient rain and the noir jazz loop
+    startRain();
     music();
   }
   if (AC.state === 'suspended') AC.resume();
@@ -144,7 +148,7 @@ function tone(f, t, d, v, w, detune = 0) {
   o.frequency.value = f;
   if (detune) o.detune.value = detune;
 
-  const a = Math.min(0.08, d * 0.3); // soft attack for long notes, fast for blips
+  const a = Math.min(0.08, d * 0.3); // Soft attack for music, fast for text blips
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(v, t + a);
   g.gain.exponentialRampToValueAtTime(.0001, t + d);
@@ -155,49 +159,94 @@ function tone(f, t, d, v, w, detune = 0) {
   o.stop(t + d + 0.05);
 }
 
-// NOIR DETECTIVE THEME (Slow, tension-filled jazz/blues loop)
+// Low Rain Ambient Generator (Procedural White Noise + Lowpass Filter)
+function startRain() {
+  if (!AC) return;
+  const bufferSize = AC.sampleRate * 2;
+  const buffer = AC.createBuffer(1, bufferSize, AC.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1; // White noise
+  }
+
+  const noise = AC.createBufferSource();
+  noise.buffer = buffer;
+  noise.loop = true;
+
+  // Filter to make it sound like gentle rain, not harsh static
+  const filter = AC.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 400; // Deep, muffled rain rumble
+
+  const rainGain = AC.createGain();
+  rainGain.gain.value = 0.03; // Very subtle background level
+
+  noise.connect(filter);
+  filter.connect(rainGain);
+  rainGain.connect(mg);
+  noise.start();
+}
+
+// Brushed Jazz Snare / Kick sound
+function drum(type, t) {
+  if (!AC || s.mute) return;
+  if (type === 'kick') {
+    tone(60, t, 0.2, 0.15, 'sine'); // Muffled jazz kick
+  } else if (type === 'snare') {
+    // Soft brushed snare tap using lowpass noise pulse
+    tone(180, t, 0.08, 0.02, 'triangle');
+  }
+}
+
+// DARK DETECTIVE NOIR THEME
 function music() {
-  // Noir progression: Dm, Dm6, Gm, Bb7/A7 (Tension chords)
-  const bassRoots = [73.42, 69.30, 98.00, 110.00]; // D2, C#2, G2, A2
+  // Slow, walking upright bass notes (Dm - Dm7/C - BbMaj7 - A7alt)
+  const bassLine = [73.42, 65.41, 58.27, 55.00]; // D2, C2, Bb1, A1
   
-  // D Minor Blues / Pentatonic scale frequencies for a smoky lead melody
-  // Notes: D3, F3, G3, G#3 (blue note), A3, C4, D4, F4
-  const noirScale = [146.83, 174.61, 196.00, 207.65, 220.00, 261.63, 293.66, 349.23];
-  
+  // Jazz Noir chords (D minor 9th, F blues notes, Ab diminished)
+  const pianoChords = [
+    [146.83, 174.61, 220.00, 261.63], // Dm7
+    [130.81, 164.81, 196.00, 246.94], // C9
+    [116.54, 146.83, 174.61, 220.00], // BbMaj7
+    [110.00, 138.59, 164.81, 207.65]  // A7b9 (Suspenseful)
+  ];
+
   let step = 0;
 
-  // 880ms interval = Slow ~68 BPM tempo
+  // Very slow tempo: 1000ms per beat (~60 BPM walking pace)
   setInterval(() => {
     if (s.mute || !AC) return;
     const t = AC.currentTime;
-    
-    // 1. Deep, subtle Upright Bass pulse on beat 1 & 3
-    if (step % 2 === 0) {
-      const currentBass = bassRoots[(step >> 2) % 4];
-      tone(currentBass, t, 1.4, 0.22, 'triangle');
-      // Subtle fifth harmonic for acoustic bass feel
-      tone(currentBass * 1.5, t, 0.8, 0.05, 'sine');
+    const bar = Math.floor(step / 4) % 4;
+    const beat = step % 4;
+
+    // 1. Walking Upright Bass (Plays on beats 1 and 3)
+    if (beat === 0 || beat === 2) {
+      tone(bassLine[bar], t, 1.2, 0.18, 'triangle');
     }
 
-    // 2. Muted "Ride Cymbal" / Rain drop tick every beat with slight swing
-    const swingOffset = (step % 2 === 1) ? 0.06 : 0;
-    tone(2800 + Math.random() * 400, t + swingOffset, 0.03, 0.015, 'square');
+    // 2. Muffled Jazz Drums (Slow heartbeat pattern)
+    if (beat === 0) drum('kick', t);
+    if (beat === 2) drum('snare', t + 0.1);
 
-    // 3. Smoky "Muted Saxophone / Trumpet" melody (plays sparse, expressive notes)
-    if (Math.random() < 0.55) {
-      const noteFreq = noirScale[Math.floor(Math.random() * noirScale.length)];
-      
-      // Warm sine wave with subtle pitch detune for a vintage vinyl/noir feel
-      tone(noteFreq, t + 0.1, 1.2, 0.07, 'sine', (Math.random() - 0.5) * 15);
-      
-      // Add minor-6th / tritone harmony occasionally for extra mystery
-      if (Math.random() < 0.3) {
-        tone(noteFreq * 1.414, t + 0.25, 0.9, 0.03, 'sine'); // Tritone offset
-      }
+    // 3. Sparse, Smoky Piano Chords (Plays off-beat with moody sustain)
+    if (beat === 1 && Math.random() < 0.75) {
+      const chord = pianoChords[bar];
+      chord.forEach((freq, idx) => {
+        // Staggered strum for a human jazz feel
+        tone(freq, t + (idx * 0.04), 1.6, 0.04, 'sine', -5);
+      });
+    }
+
+    // 4. Rare Solo Lead Note (Melancholy saxophone/piano accent)
+    if (beat === 3 && Math.random() < 0.4) {
+      const soloNotes = [293.66, 349.23, 392.00, 415.30, 440.00, 523.25]; // D4 Blues scale with flat 5th
+      const note = soloNotes[Math.floor(Math.random() * soloNotes.length)];
+      tone(note, t + 0.2, 1.4, 0.05, 'sine', 8);
     }
 
     step++;
-  }, 880);
+  }, 1000);
 }
 
 function blip(k) {
