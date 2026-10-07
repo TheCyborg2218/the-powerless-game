@@ -1,82 +1,86 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Powerless</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>The Powerless</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#d8d4c8;--dim:#8a877f;--paper:#cfc9b4;--red:#9b2323}
+:root{--ink:#e4e2d8;--dim:#9a988c;--ln:#55554d;--y:#c4b777;--red:#a82a2a}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#050505;color:var(--ink);font-family:"Courier New",monospace;overflow:hidden}
-#app{height:100%;display:flex;align-items:center;justify-content:center}
-#stage{position:relative;width:min(100vw,160vh);height:min(62.5vw,100vh);font-size:min(1.8vw,2.9vh)}
-canvas#cv{width:100%;height:100%;image-rendering:pixelated;display:block}
-#hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:.5em .8em;background:linear-gradient(#000c,#0000);font-size:.9em}
-button{font-family:inherit;background:#15151399;color:var(--ink);border:1px solid #77746a;padding:.35em .8em;margin:.2em;cursor:pointer;letter-spacing:.05em}
-button:hover,button:focus-visible{background:#d8d4c8;color:#111;outline:none}
-#dlg{display:none;position:absolute;left:3%;right:3%;bottom:3%;min-height:24%;background:#0b0b0aee;border:2px solid #9a978c;padding:.8em;gap:1em;box-shadow:0 0 0 4px #000}
-#dlg.on{display:flex}
-#pc{width:5em;height:6.2em;image-rendering:pixelated;border:1px solid #555;background:#111;flex:none}
-.dt{flex:1}#who{color:#a89c5a;font-size:.85em;margin-bottom:.4em;letter-spacing:.1em}#tx{font-size:1.15em;line-height:1.5}
-#cont{position:absolute;right:1em;bottom:.5em;animation:bl 1s steps(2) infinite;color:var(--dim)}
-@keyframes bl{50%{opacity:0}}
-#chs{display:none;position:absolute;left:3%;right:3%;bottom:3%;flex-direction:column;background:#0b0b0af2;border:2px solid #9a978c;padding:.5em;z-index:3}
-#chs.on{display:flex}#chs button{text-align:left;font-size:1.05em;padding:.6em}
-.ov{position:fixed;inset:0;display:none;z-index:20;background:#050505f0;overflow:auto}
-.ov.on{display:flex;flex-direction:column}
-.in{margin:auto;padding:20px;max-width:900px;width:100%}.c{text-align:center}
-#ti{z-index:50;background:radial-gradient(#26261f,#050505)}#how,#pa{z-index:45}#md{z-index:30}#fn{z-index:25;background:#050505c7}#in{z-index:48}
-h1{font-size:min(9vw,4.5em);letter-spacing:.25em;margin:.2em 0;font-weight:400}h2{font-weight:400;color:var(--dim)}
-.tag{font-style:italic;color:#a89c5a;margin:1.5em 0}
-.fx{position:fixed;inset:0;pointer-events:none;z-index:99}
-#gr{opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");animation:gr .4s steps(3) infinite}
-@keyframes gr{33%{background-position:40px 80px}66%{background-position:-60px 30px}}
-#vg{background:radial-gradient(transparent 55%,#000d)}
-#fl{background:#000;animation:fl 5s infinite}@keyframes fl{0%,100%{opacity:0}48%{opacity:0}50%{opacity:.08}52%{opacity:0}80%{opacity:.04}}
-#toast{position:fixed;top:12%;left:50%;transform:translateX(-50%);background:#cfc9b4;color:#1a1812;padding:.6em 1.2em;z-index:60;display:none;box-shadow:3px 5px 8px #000;transform:translateX(-50%) rotate(-1deg)}
+html,body{height:100%;margin:0;overflow:hidden;background:#0a0b09;color:var(--ink);font:24px/1.35 VT323,'Courier New',monospace}
+.px{font-family:'Press Start 2P','Courier New',monospace;line-height:1.6}.dim{color:var(--dim)}
+#app{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#cv{image-rendering:pixelated;width:min(100vw,calc(100vh*1.6667));aspect-ratio:320/192;box-shadow:0 0 80px #000}
+body::before{content:'';position:fixed;inset:0;z-index:40;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.7))}
+body::after{content:'';position:fixed;inset:-20px;z-index:41;pointer-events:none;opacity:.1;animation:gr .5s steps(4) infinite;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+#fl{position:fixed;inset:0;z-index:39;pointer-events:none;background:#c8c2a0;animation:fk 6s infinite}
+@keyframes gr{to{transform:translate(-14px,10px)}}@keyframes fk{0%,100%{opacity:.02}7%{opacity:.05}8%{opacity:.01}47%{opacity:.07}49%{opacity:.02}}
+@keyframes fi{from{opacity:0}}
+.ov{position:fixed;inset:0;display:none;align-items:center;flex-direction:column;background:rgba(10,10,9,.95);z-index:5;padding:18px;overflow:auto;text-align:center}
+.ov>:first-child{margin-top:auto}.ov>:last-child{margin-bottom:auto}
+.ov.on{display:flex;animation:fi .4s}#title{background:rgba(10,10,9,.8)}
+h1{font:clamp(22px,6vw,48px) 'Press Start 2P',monospace;margin:14px 0 10px;text-shadow:3px 3px #000;letter-spacing:2px;line-height:1.3}
+.sub{font-size:30px;color:var(--y);margin:4px}.q2{font-size:30px;color:var(--y)}.h2{font-size:14px;margin:12px}
+.b{font:12px/1.6 'Press Start 2P',monospace;background:#171814;color:var(--ink);border:2px solid var(--ln);padding:12px 16px;margin:6px;cursor:pointer;box-shadow:3px 3px 0 #000}
+.b:hover:not(:disabled),.b:focus-visible{border-color:var(--y);color:var(--y);outline:none}.b:disabled{opacity:.35;cursor:default}.b.s{font-size:10px;padding:8px 10px;margin:2px}
+.b.q{display:block;width:100%;text-align:left;font:25px/1.3 VT323,monospace;padding:10px 14px;margin:8px 0}
+#hud{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;right:10px;display:none;justify-content:space-between;align-items:center;z-index:4;font-size:11px;color:var(--ink);text-shadow:2px 2px #000}
+body.g #hud{display:flex}
+#pr{position:fixed;bottom:100px;left:0;right:0;text-align:center;font-size:12px;color:var(--y);z-index:4;pointer-events:none;text-shadow:2px 2px #000}
+#toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:60;background:#12120f;border:2px solid var(--y);color:var(--y);padding:10px 14px;font-size:11px;display:none;text-align:center}
+#db{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:min(860px,94vw);background:#0d0e0c;border:3px solid var(--ln);box-shadow:0 0 0 3px #000;padding:16px 22px 20px;z-index:8;display:none;min-height:120px;cursor:pointer}
+#db.on{display:block;animation:fi .3s}#dsp{font-size:12px;color:var(--y)}#dt{margin-top:10px;font-size:28px;line-height:1.35}
+#intro{background:#050505;z-index:9}#itx{font-size:clamp(26px,4vw,38px);max-width:700px;min-height:140px;cursor:pointer;line-height:1.4}
+.pan{display:flex;gap:20px;max-width:900px;width:100%;background:#0f100d;border:3px solid var(--ln);padding:18px;text-align:left;flex-wrap:wrap;justify-content:center}
+#pc{width:128px;height:208px;image-rendering:pixelated;border:2px solid var(--ln)}.pm{flex:1;min-width:280px}
+#log{max-height:38vh;overflow:auto;margin:10px 0;padding-right:8px}.m{margin:10px 0;font-size:27px;line-height:1.35}.m b{display:block;font:10px 'Press Start 2P',monospace;color:var(--y);margin-bottom:4px}.m.A{border-left:4px solid var(--ln);padding-left:12px}
 /* board */
-#bo{background-color:#241f1b;background-image:radial-gradient(#3a322b 1px,transparent 1.5px),radial-gradient(#171310 1px,transparent 1.5px);background-size:9px 9px,13px 13px}
-.bh{text-align:center;padding:14px}.bh h1{font-size:2em;letter-spacing:.3em;margin:0}.bh i{color:#c9c08f}
-#bc{position:relative;padding:10px 14px 40px;max-width:1200px;margin:0 auto;width:100%}
-#th{position:absolute;left:0;top:0;pointer-events:none;z-index:5}
-#th path{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:1;stroke-dashoffset:0}
-#th path.n{stroke-dashoffset:1;animation:dr 1.2s .3s forwards}@keyframes dr{to{stroke-dashoffset:0}}
-.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}@media(max-width:800px){.cols{grid-template-columns:repeat(2,1fr)}}
-.col{display:flex;flex-direction:column;min-height:200px}
-.card{position:relative;background:var(--paper);color:#1d1b16;padding:10px;margin:12px 4px;box-shadow:3px 6px 9px #000a;font-size:12px;cursor:pointer;transform:rotate(var(--r));transition:transform .15s}
-.card:hover{transform:rotate(0) scale(1.04);z-index:6}
-.card small{display:block;margin-top:4px;color:#5b5646}
-.card.inf{background:#c9bf84;font-family:"Segoe Script","Bradley Hand",cursive;font-size:12px}
-.card.hd{background:#e0dccb;text-align:center;font-size:15px;letter-spacing:.1em;border:3px double #444}
-.card.chip{background:none;box-shadow:none;border:2px solid var(--red);border-radius:40px;color:var(--ink);text-align:center;font-family:"Segoe Script",cursive;padding:6px}
-.pin{position:absolute;top:-6px;left:50%;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#8a1f1f;box-shadow:1px 3px 3px #000}
+#bd{background-color:#221e1a;background-image:radial-gradient(#3a322b 1px,transparent 1.5px),radial-gradient(#15110e 1px,transparent 1.5px);background-size:9px 9px,13px 13px;align-items:stretch;text-align:left;justify-content:flex-start}
+#bd>:first-child,#bd>:last-child{margin:0}
+.bh{text-align:center;padding:6px 0 10px}.bh h1{font-size:clamp(18px,3vw,28px);margin:6px}
+#bc{position:relative;width:min(1240px,96vw);margin:0 auto;padding:6px 6px 30px}
+#th2{position:absolute;left:0;top:0;z-index:0;pointer-events:none}
+#th2 path{fill:none;stroke:var(--red);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0;filter:drop-shadow(1px 2px 1px #000)}
+#th2 path.n{stroke-dashoffset:1;animation:dr 1.2s .4s forwards}@keyframes dr{to{stroke-dashoffset:0}}
+.cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;position:relative;z-index:1}@media(max-width:900px){.cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.col{display:flex;flex-direction:column}
+.card{position:relative;background:#d3cdb8;color:#1b1914;padding:14px 14px 12px;margin:30px 8px;box-shadow:3px 6px 9px #000a;font:23px/1.25 VT323,monospace;cursor:pointer;transform:rotate(var(--r));transition:transform .15s}
+.card:hover,.card:focus-visible{transform:rotate(0) scale(1.03);z-index:3;outline:none}
+.card b{display:block;font-weight:400;font-size:25px;line-height:1.15}.card small{display:block;margin-top:6px;font-size:19px;color:#5b5646}
+.card.inf{background:#d6cb92}.card.inf b{font-size:19px;color:#6b2020;letter-spacing:1px}
+.card.hd{background:#e6e2d1;text-align:center;border:3px double #444;font:12px/1.5 'Press Start 2P',monospace}.card.hd canvas{display:block;margin:0 auto 8px;width:64px;height:104px;image-rendering:pixelated;background:#171814}
+.card.chip{background:#221e1a;box-shadow:none;border:3px solid var(--red);border-radius:40px;color:var(--ink);text-align:center;font:11px/1.5 'Press Start 2P',monospace;padding:10px}
+.pin{position:absolute;top:-7px;left:50%;width:13px;height:13px;margin-left:-6px;border-radius:50%;background:#a82a2a;box-shadow:1px 3px 3px #000,inset -2px -2px 0 #6b1515}
 .drop{animation:drop .5s ease-out}@keyframes drop{from{transform:translateY(-50px) scale(1.2) rotate(calc(var(--r)*5));opacity:0}}
-.xn{font-family:"Segoe Script",cursive;color:#e0c8c0;border:1px dashed var(--red);padding:8px;margin:8px 0;font-size:12px}
-.paper{background:var(--paper);color:#1d1b16;padding:22px;box-shadow:4px 8px 14px #000}
-.paper h3{margin-top:0}.q{font-style:italic;border-left:3px solid var(--red);padding-left:10px}.infx{background:#c9bf84;padding:8px}
-.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0}.g4>div{background:var(--paper);color:#1d1b16;padding:10px;font-size:13px}
-.big{font-size:1.6em;color:#e8d9a0;text-align:center;letter-spacing:.1em}
-textarea{width:100%;min-height:50vh;background:var(--paper);color:#1d1b16;font:16px/1.6 "Courier New",monospace;padding:16px;border:0;box-shadow:inset 0 0 30px #8a7f5a88;resize:vertical}
+.xn{position:relative;z-index:1;background:#16130f;border:2px dashed var(--red);padding:12px 16px;margin:12px 8px;font-size:25px}
+.paper{background:#d3cdb8;color:#1b1914;padding:24px;box-shadow:4px 8px 14px #000;text-align:left;max-width:640px;width:100%;font-size:26px}
+.paper h3{margin:0 0 10px;font:13px/1.6 'Press Start 2P',monospace}.q{border-left:4px solid var(--red);padding-left:12px;font-style:italic}.infx{background:#d6cb92;padding:10px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0;max-width:900px}.g4>div{background:#d3cdb8;color:#1b1914;padding:12px;text-align:left}.g4 b{font:11px 'Press Start 2P',monospace}
+#fn{z-index:7;background:rgba(10,10,9,.84)}.big{font:clamp(13px,2.2vw,20px)/1.7 'Press Start 2P',monospace;color:var(--y);margin:10px 0}
+#es{background:#1a1713}#es .doc{background:#d6d0bb;color:#1b1914;width:min(860px,96vw);padding:clamp(16px,4vw,40px);text-align:left;box-shadow:5px 9px 18px #000;font:21px/1.55 'Courier New',monospace;border-top:14px solid #8a7f5a}
+#es h1{color:#1b1914;text-shadow:none;margin:0 0 6px;font-size:clamp(18px,3.4vw,30px)}
+#es textarea{width:100%;min-height:46vh;background:#e4dfcb;color:#1b1914;border:2px solid #8a7f5a;font:21px/1.6 'Courier New',monospace;padding:16px;resize:vertical}
+#es .b{background:#2a2720;color:#e4e2d8}
 </style></head><body>
-<div id="app"><div id="stage"><canvas id="cv"></canvas>
-<div id="hud"><span>EVIDENCE <b id="evc">0/12</b></span><span><button onclick="openBoard()">BOARD [B]</button><button class="mu" onclick="toggleMute()">MUTE</button><button onclick="pause(1)">MENU [ESC]</button></span></div>
-<div id="chs"></div>
-<div id="dlg"><canvas id="pc" width="24" height="30"></canvas><div class="dt"><div id="who"></div><div id="tx"></div></div><i id="cont">▼</i></div></div></div>
-
-<div id="ti" class="ov on"><div class="in c"><h1>THE POWERLESS</h1><h2>An Investigation of Power on a California Ranch</h2><p class="tag">“Everyone has something to lose. Not everyone has the power to protect it.”</p>
-<div><button id="bcont" onclick="cont()" style="display:none">[ CONTINUE INVESTIGATION ]</button></div><div><button onclick="begin()">[ BEGIN INVESTIGATION ]</button></div><div><button onclick="show('how')">[ HOW TO PLAY ]</button></div></div></div>
-<div id="in" class="ov" onclick="introNext()"><div class="in c"><p id="itx" style="font-size:1.5em;line-height:1.6"></p><p style="color:var(--dim)">click or press SPACE</p></div></div>
-<div id="how" class="ov"><div class="in paper" style="max-width:600px"><h3>HOW TO PLAY</h3><p>WASD / Arrows: move. E / Enter: interact. Space / Enter: advance dialogue. 1 / 2: choose a question. B: case board. Esc: menu.</p><p>Walk the ranch. Examine the places where the men live and work. Question the four hands, who each get three questions. Every answer is pinned to the case board. The board turns what you learn into inferences. When you have 12 pieces of evidence, the final case unlocks.</p><button onclick="hide('how')">CLOSE</button></div></div>
-<div id="pa" class="ov"><div class="in c" style="max-width:420px"><h2>CASE PAUSED</h2><div><button onclick="pause(0)">CONTINUE</button></div><div><button onclick="pause(0);openBoard()">EVIDENCE BOARD</button></div><div><button class="mu" onclick="toggleMute()">MUTE</button></div><div><button onclick="restart()">RESTART INVESTIGATION</button></div></div></div>
-<div id="bo" class="ov"><div class="bh"><h1>CASE BOARD</h1><i>“Who has the least power?”</i><div><button onclick="hide('bo')">CLOSE</button> <button id="fbtn" onclick="openFinal()" style="display:none">FINAL CASE</button></div></div><div id="bc"><svg id="th"></svg><div class="cols" id="cols"></div><div id="xn"></div></div></div>
-<div id="md" class="ov" onclick="if(event.target===this)hide('md')"><div class="in paper" id="mdc" style="max-width:560px"></div></div>
-<div id="fn" class="ov"><div class="in" id="fnc"></div></div>
-<div id="es" class="ov"><div class="in"><div class="paper"><h1 style="font-size:2em;letter-spacing:.2em;margin:0">FINAL CASE REPORT</h1><p><i>“Write your conclusion.”</i></p><p><b>“To what degree are the characters in <u>Of Mice and Men</u> marginalized, and what does Steinbeck reveal through their experiences?”</b></p><h3>YOUR ESSAY</h3><textarea id="esy" oninput="S.essay=this.value;save()"></textarea><p><small>Use the evidence you collected to support your conclusion.</small></p><button onclick="hide('es')">BACK TO BOARD</button><button onclick="hide('es');hide('fn');hide('bo')">RETURN TO RANCH</button></div></div></div>
-<div id="toast"></div>
-<div class="fx" id="gr"></div><div class="fx" id="vg"></div><div class="fx" id="fl"></div>
-
+<div id="app"><canvas id="cv"></canvas></div><div id="fl"></div>
+<div id="hud"><span id="ar" class="px"></span><span><button class="b s" id="bm">MENU</button><button class="b s" id="bb">BOARD</button><button class="b s" id="bf" disabled>FINAL CASE</button><button class="b s mu" id="bmu">MUTE</button></span></div>
+<div id="pr" class="px"></div><div id="toast" class="px"></div>
+<div id="db"><b id="dsp" class="px">DETECTIVE</b><div id="dt"></div></div>
+<div class="ov on" id="title"><canvas id="tc" width="80" height="28" style="image-rendering:pixelated;width:min(480px,86vw)"></canvas>
+<h1>THE POWERLESS</h1><p class="sub">An Investigation of Power on a California Ranch</p><p class="dim" style="max-width:600px;font-size:27px">“Everyone has something to lose. Not everyone has the power to protect it.”</p>
+<div><button class="b" id="tb">[ BEGIN INVESTIGATION ]</button><button class="b" id="tcn" style="display:none">[ CONTINUE ]</button><button class="b" id="th">[ HOW TO PLAY ]</button></div></div>
+<div class="ov" id="intro"><div id="itx"></div><p class="px dim" style="font-size:10px">[ SPACE / CLICK ]</p></div>
+<div class="ov" id="how"><h1 style="font-size:20px">HOW TO PLAY</h1><div style="max-width:660px;font-size:27px;text-align:left"><p>Walk the ranch with WASD or the arrow keys. Press E, SPACE or ENTER (or click) when a glowing marker is nearby to examine a place or talk to a hand.</p><p>Each of the four ranch hands will answer only THREE questions. At each step you pick one of two. Choose carefully.</p><p>Everything you learn is pinned to the case board (press B, or step into your office). Click any card to inspect it. Collect 12 pieces of evidence to unlock the FINAL CASE.</p><p>There is no answer key. Build an interpretation from the evidence. Progress saves automatically.</p></div><button class="b" id="hb">BACK</button></div>
+<div class="ov" id="mn"><h1 style="font-size:20px">PAUSED</h1><button class="b" id="m1">CONTINUE</button><button class="b" id="m2">EVIDENCE BOARD</button><button class="b mu" id="m5">MUTE</button><button class="b" id="m3">HOW TO PLAY</button><button class="b" id="m4">RESTART INVESTIGATION</button></div>
+<div class="ov" id="iv"><div class="pan"><canvas id="pc" width="16" height="26"></canvas><div class="pm"><div class="px" id="ivn" style="font-size:13px"></div><div id="left" class="dim"></div><div id="log"></div><div id="chs"></div></div></div></div>
+<div class="ov" id="bd"><div class="bh"><h1>CASE BOARD</h1><div class="sub">“Who has the least power?”</div><button class="b" id="bc2">CLOSE</button><button class="b" id="bf2" disabled>FINAL CASE</button></div><div id="bc"><svg id="th2"></svg><div class="cols" id="cols"></div><div id="xn"></div></div></div>
+<div class="ov" id="md" style="z-index:30"><div class="paper" id="mdc"></div></div>
+<div class="ov" id="fn"><div id="fnb"></div></div>
+<div class="ov" id="es"><div class="doc"><h1>FINAL CASE REPORT</h1><p style="margin:0 0 6px"><i>“Write your conclusion.”</i></p><p style="margin:0 0 14px;font-size:17px">Judgment on file: least power — <b id="jd"></b></p><p style="font-size:24px"><b>To what degree are the characters in <u>Of Mice and Men</u> marginalized, and what does Steinbeck reveal through their experiences?</b></p><h3 class="px" style="font-size:13px;margin:22px 0 10px">YOUR ESSAY (Placeholder)</h3><textarea id="esy"></textarea><p style="font-size:17px">Use the evidence you collected to support your conclusion.</p><button class="b" id="eb1">BACK TO BOARD</button><button class="b" id="eb2">RETURN TO RANCH</button><button class="b" id="eb3">CHANGE JUDGMENT</button></div></div>
 <script>
-const $=id=>document.getElementById(id),KEY='powerless_v1';
-const cv=$('cv'),cx=cv.getContext('2d');cv.width=320;cv.height=200;
-const fresh=()=>({ph:'title',x:20,y:172,ev:[],asked:{},fin:null,essay:'',mute:false,seen:[]});
-let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-const show=i=>$(i).classList.add('on'),hide=i=>$(i).classList.remove('on'),anyOv=()=>document.querySelector('.ov.on');
+const $=q=>document.querySelector(q),W=320,H=192,SK='powerless_v2';
+const cv=$('#cv'),c=cv.getContext('2d');cv.width=W;cv.height=H;
+const R=(g,x,y,w,h,k)=>{g.fillStyle=k;g.fillRect(x|0,y|0,w|0,h|0)};
+const fresh=()=>({started:0,ev:[],asked:{0:[],1:[],2:[],3:[]},fin:null,essay:'',mute:0,x:304,y:172,seen:[],unl:0});
+let s=(()=>{try{return Object.assign(fresh(),JSON.parse(localStorage.getItem(SK)))}catch(e){return fresh()}})();
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}};
+/* ---------- content ---------- */
 const CH={crooks:'CROOKS',candy:'CANDY',lennie:'LENNIE',wife:"CURLEY'S WIFE"};
 const CAT={crooks:['SOCIAL POWER','SOCIAL CONNECTION'],candy:['ECONOMIC POWER','PERSONAL AGENCY'],lennie:['PHYSICAL POWER','PERSONAL AGENCY'],wife:['SOCIAL POWER','SOCIAL CONNECTION']};
 const CD={'SOCIAL POWER':'Can the character belong? Are they respected? Do they have a voice?','ECONOMIC POWER':'Can the character support themselves? Can they leave? Do they control their future financially?','PHYSICAL POWER':'Can the character physically overpower others?','PERSONAL AGENCY':'Can the character understand, choose, and control their own actions and future?','SOCIAL CONNECTION':'Does the character have people who support or protect them?'};
@@ -85,131 +89,183 @@ candy:["His security depends on being useful, making his future economically fra
 lennie:["Physical strength gives Lennie power over others, but it does not give him control over his own life.","Dependence leaves him vulnerable. Physical ability and personal agency can exist separately."],
 wife:["Despite some social influence through Curley, she has little freedom or genuine companionship.","Gender expectations restrict her choices. Limited power can still be used against people beneath her."]};
 const XC=[['crooks','wife','Both experience isolation, but for different reasons.'],['candy','lennie','Both depend on George in different ways.'],['candy','crooks','Both possess useful abilities but still lack equal power.'],['lennie','wife','Both have limited control over their circumstances despite possessing some form of influence or power.']];
-const E=[['e0','crooks','SEPARATE LIVING QUARTERS',"A small room separate from the bunkhouse.","Crooks' room",188,48],
-['e1','candy','WORK / ECONOMIC SECURITY',"An older ranch worker's belongings. One missing hand makes certain jobs harder.","Bunkhouse",118,56],
-['e2','lennie','PHYSICAL POWER',"Heavy equipment built for a powerful worker. Strength is useful here. It doesn't necessarily decide who gives the orders.","Barn",265,68],
-['e3','wife','ISOLATION',"A woman's belongings sit apart from the men's working spaces. The ranch offers little privacy and fewer places to belong.","Stable yard",215,120]];
-const W=[{n:'YOUNG HAND',x:110,y:100,p:['#58584f',2,'#3a3a36'],f:700,d:.035,w:'square',st:[
+const QT={crooks:"Can think, but cannot escape racial exclusion.",candy:"Can work, but cannot escape economic insecurity.",lennie:"Can overpower others, but cannot control his own strength.",wife:"Can influence others, but cannot control her own circumstances."};
+const E=[['e0','crooks','SEPARATE LIVING QUARTERS',"A small room separate from the bunkhouse.","Crooks' room",288,80],
+['e1','candy','WORK / ECONOMIC SECURITY',"An older ranch worker's belongings. One missing hand makes certain jobs harder.","Bunkhouse",56,80],
+['e2','lennie','PHYSICAL POWER',"Heavy equipment built for a powerful worker. Strength is useful here. It doesn't necessarily decide who gives the orders.","Barn",158,80],
+['e3','wife','ISOLATION',"A woman's belongings sit apart from the men's working spaces. The ranch offers little privacy and fewer places to belong.","Stable",248,80]];
+const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
 [['crooks',"You seem to hear quite a bit around here. What have you noticed about Crooks?|Can't say I know the man all that well. Folks don't spend much time in his room. That's about all I've noticed.|Why don't they?|Reckon you'd have to ask them.",'NOBODY VISITS HIS ROOM'],['lennie',"What about Lennie? The men seem to keep an eye on him.|Hard not to. Big fella like that can move half the ranch when he puts his mind to it.|And yet George does most of the talking for him?|Yeah. George usually knows when it's time to move along.",'GEORGE SPEAKS FOR LENNIE']],
-[['wife',"What's Curley's wife doing wandering around the ranch so much?|Looking for somebody to talk to, I reckon.|Doesn't she have Curley?|That's what I'd think.",'LOOKING FOR SOMEBODY TO TALK TO'],['candy',"And Candy? He seems to watch the boss when work comes up.|Reckon he's scared they'll set him loose, same as they'd do an old dog.|Has he said so?|Not to me. I just see how he looks.",'CANDY WATCHES THE BOSS']],
+[['wife',"What's Curley's wife doing wandering around the ranch so much?|Looking for somebody to talk to, I reckon.|Doesn't she have Curley?|That's what I'd think.",'LOOKING FOR SOMEBODY TO TALK TO'],['candy',"And Candy? He seems to watch the boss when work comes up.|Reckon he's scared they'll set him loose, same as they would an old dog.|Has he said so?|Not to me. I just see how he looks.",'CANDY WATCHES THE BOSS']],
 [['crooks',"They say Crooks reads more than the rest of the men.|He's got books piled in there. More than the whole bunkhouse put together.|Ever talk books with him?|Nobody much talks with him about anything.",'BOOKS NOBODY ASKS ABOUT'],['wife',"Curley keeps tabs on her, doesn't he?|Always asking where she's got to. She keeps going anyhow.|Why's that?|Dunno. Might be she's got nowhere else she's let to be.",'CURLEY KEEPS TABS']]]},
-{n:'OBSERVANT HAND',x:190,y:122,p:['#6a6a68',1,'#2e2e2c'],f:260,d:.05,w:'triangle',st:[
+{n:'OBSERVANT HAND',k:'obs',x:190,y:112,st:[
 [['crooks',"Crooks seems sharper than most of the men here. Does that buy him any standing?|Being sharp and being respected ain't always the same thing.|Meaning?|Meaning a man can know plenty and still have folks decide he don't belong.",'SHARP IS NOT RESPECTED'],['candy',"Candy's been here a long time. I'd think that counts for something.|Counts for memories, maybe.|Not much else?|Depends what the boss is counting.",'YEARS DO NOT COUNT']],
 [['lennie',"Lennie looks like the strongest man on the ranch. Wouldn't that give him some power?|Power over a fence post, maybe. Doesn't mean he knows what to do with himself.",'POWER OVER A FENCE POST'],['wife',"And Curley's wife?|She's got a name, but not much say.|Her husband's the boss's son.|That ain't the same thing as having a voice.",'A NAME, NOT A VOICE']],
 [['lennie',"Who decides where Lennie goes?|Not Lennie. He follows George like a shadow follows a post.|Is that his choice?|A man follows what he can't do without.",'LENNIE FOLLOWS GEORGE'],['crooks',"Does Crooks ever sit with the men?|Never seen it. And I've been watching.|Would he be welcome?|I'd say that room says what the men won't.",'THE ROOM SAYS WHAT MEN WON\'T']]]},
-{n:'BLUNT HAND',x:60,y:130,p:['#4a4a46',1,'#24241f'],f:190,d:.05,w:'square',st:[
+{n:'BLUNT HAND',k:'blunt',x:228,y:104,st:[
 [['candy',"What happens to a ranch hand once he can't pull his weight?|Somebody else takes his place. That's how work goes.|Even after years of service?|Years don't lift a hay bale.",'REPLACED WHEN NOT USEFUL'],['crooks',"Why does Crooks keep to himself?|That's where he's supposed to be, far as some men figure.|And what do YOU figure?|I figure asking me won't change it.",'WHERE HE IS SUPPOSED TO BE']],
 [['lennie',"Does Lennie's strength make the other men respect him?|Respect? Maybe. Trust? That's another matter.",'RESPECT WITHOUT TRUST'],['wife',"Does Curley's wife have any real power around here?|She can get a man in trouble, sure.|That's power.|Small power. Borrowed power. Not the same thing.",'BORROWED POWER']],
 [['candy',"Does Candy have anyone to speak up for him?|Not that I've seen.|Not even George?|George listens. Listening ain't the boss changing his mind.",'NOBODY SPEAKS FOR CANDY'],['wife',"What do the men say about Curley's wife?|Stay clear. Trouble follows her.|Is that fair?|Didn't say fair. Said what the men say.",'THE MEN KEEP THEIR DISTANCE']]]},
-{n:'OLD HAND',x:150,y:150,p:['#3c3c38',1,'#55524a'],f:130,d:.07,w:'triangle',st:[
+{n:'OLD HAND',k:'old',x:132,y:120,st:[
 [['candy',"Candy's getting older. What happens to a man when his working days are behind him?|If he's got money saved, he gets by. If he ain't, well... that's another story.|And Candy?|Don't reckon he's got much tucked away.",'LITTLE SAVED'],['candy',"Does a man's age matter much on a ranch?|Age matters when the work gets heavy.",'AGE MATTERS WHEN WORK GETS HEAVY']],
 [['crooks',"Crooks is useful. Doesn't that protect him?|Useful don't make a man equal.",'USEFUL DON\'T MAKE EQUAL'],['lennie',"What about Lennie? He's stronger than most men twice his size.|Strong as a bull. Still needs George to tell him where to stand.",'STRONG AS A BULL']],
 [['wife',"Curley's wife is young. She ought to have plenty of life ahead of her.|Life ahead ain't the same as choices.",'LIFE AHEAD, NO CHOICES'],['candy',"Do a man's dreams matter on a ranch like this?|Dreams cost money. A man without land dreams on borrowed time.|Who's got one?|Candy and George, last I heard.",'THE FARM DREAM']]]}];
 const EV={};E.forEach(e=>EV[e[0]]={ch:e[1],t:e[2],o:e[3],s:e[4],cat:CAT[e[1]][0]});
-W.forEach((w,wi)=>w.st.forEach((st,s)=>st.forEach((o,i)=>EV['w'+wi+s+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,cat:CAT[o[0]][s%2]})));
-const SP={DETECTIVE:{f:330,d:.03,w:'triangle',p:['#2a2a2c',1,'#151515']}};W.forEach(w=>SP[w.n]=w);
-/* audio */
-let AC,mg;
-function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}mg=AC.createGain();mg.gain.value=S.mute?0:1;mg.connect(AC.destination);music()}if(AC.state==='suspended')AC.resume()}
+W4.forEach((w,wi)=>w.st.forEach((st,n)=>st.forEach((o,i)=>EV['w'+wi+n+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,cat:CAT[o[0]][n%2]})));
+/* ---------- audio ---------- */
+let AC,mg;const VO={det:[330,.03,'triangle'],young:[700,.035,'square'],obs:[260,.05,'triangle'],blunt:[190,.05,'square'],old:[130,.07,'triangle']};
+function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}mg=AC.createGain();mg.gain.value=s.mute?0:1;mg.connect(AC.destination);music()}if(AC.state==='suspended')AC.resume()}
 function tone(f,t,d,v,w){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type=w;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.05)}
 // OPTIONAL: Replace this procedural music with a royalty-free local audio file.
-function music(){const bass=[110,87.3,73.4,82.4],sc=[220,261.6,293.7,329.6,392,440,523];let n=0;setInterval(()=>{if(S.mute||!AC)return;const t=AC.currentTime;tone(bass[(n>>2)%4],t,.9,.16,'triangle');if(n%2==0&&Math.random()<.65)tone(sc[Math.random()*7|0],t+.2,1.1,.045,'sine');if(n%4==2)tone(bass[(n>>2)%4]*2,t,.4,.05,'sine');n++},650)}
-function blip(s){const v=SP[s];if(S.mute||!AC||!v)return;tone(v.f*(1+Math.random()*.1),AC.currentTime,v.d,.05,v.w)}
-function click(){if(S.mute||!AC)return;tone(1200,AC.currentTime,.03,.06,'square');tone(300,AC.currentTime+.05,.05,.06,'square')}
-function toggleMute(){S.mute=!S.mute;if(mg)mg.gain.value=S.mute?0:1;document.querySelectorAll('.mu').forEach(b=>b.textContent=S.mute?'UNMUTE':'MUTE');save()}
-/* drawing */
-function person(c,x,y,b,h,hc){x|=0;y|=0;c.fillStyle='#0008';c.fillRect(x-4,y-1,9,2);c.fillStyle=b;c.fillRect(x-3,y-9,7,9);c.fillStyle='#bdb8a8';c.fillRect(x-2,y-13,5,4);c.fillStyle=hc;if(h==1){c.fillRect(x-4,y-14,9,2);c.fillRect(x-2,y-16,5,3)}else if(h==2)c.fillRect(x-3,y-15,7,3)}
-const R=[[10,10,50,36],[80,10,75,40],[170,10,36,30],[220,10,90,50],[225,100,55,26],[150,162,160,5]];
-function bld(x,y,w,h,c,l){cx.fillStyle='#000a';cx.fillRect(x+3,y+h,w,4);cx.fillStyle=c;cx.fillRect(x,y,w,h);cx.fillStyle='#ffffff14';cx.fillRect(x,y,w,4);cx.fillStyle='#0009';cx.fillRect(x+w/2-4,y+h-10,8,10);cx.fillStyle='#9a978c';cx.font='6px monospace';cx.textAlign='center';cx.fillText(l,x+w/2,y+h/2-2)}
-const dust=[...Array(40)].map(()=>({x:Math.random()*320,y:Math.random()*200,s:20+Math.random()*30}));
-let T=0;const keys={};
-function tg(){const t=W.map((w,i)=>({x:w.x,y:w.y,l:'Question the hand',f:()=>ask(i)}));E.forEach(e=>t.push({x:e[5],y:e[6],l:'Examine',f:()=>{say([['DETECTIVE',e[3]]],()=>pin(e[0]))}}));t.push({x:35,y:52,l:'Case board',f:openBoard});return t}
-function draw(){const px=S.x,py=S.y;cx.fillStyle='#1c1c1a';cx.fillRect(0,0,320,200);
-for(let i=0;i<90;i++){cx.fillStyle=i%3?'#232321':'#171715';cx.fillRect((i*53)%320,(i*37)%200,3,1)}
-cx.fillStyle='#2a2a27';cx.fillRect(0,95,320,16);cx.fillRect(100,50,16,60);cx.fillStyle='#1d221c';cx.fillRect(150,170,170,30);
-cx.fillStyle='#ffffff22';cx.font='5px monospace';cx.textAlign='left';cx.fillText('WORK YARD',150,104);cx.fillText('ENTRANCE',6,194);cx.fillText('FENCE / FIELD',215,185);
-cx.fillStyle='#4a4a44';cx.fillRect(0,168,4,20);cx.fillRect(16,168,4,20);
-bld(10,10,50,36,'#3b3b39','OFFICE');bld(80,10,75,40,'#3a3a36','BUNKHOUSE');bld(170,10,36,30,'#302d34',"CROOKS' ROOM");bld(220,10,90,50,'#35342b','BARN');bld(225,100,55,26,'#2b2f2a','STABLE');
-cx.fillStyle='#55534b';for(let x=150;x<310;x+=8)cx.fillRect(x,162,2,8);cx.fillRect(150,164,160,1);
-tg().forEach(t=>{if(t.l==='Examine'){const k=E.find(e=>e[5]==t.x),d=S.ev.includes(k[0]);cx.fillStyle=d?'#55534b':'#a89c5a';cx.globalAlpha=d?1:.5+.5*Math.sin(T*4);cx.fillRect(t.x-1,t.y-1,3,3);cx.globalAlpha=1}});
-const ps=[...W.map(w=>({y:w.y,p:w.p,x:w.x})),{x:px,y:py+(mv?Math.sin(T*18):0),p:SP.DETECTIVE.p}].sort((a,b)=>a.y-b.y);ps.forEach(o=>person(cx,o.x,o.y,o.p[0],o.p[1],o.p[2]));
-const g=cx.createRadialGradient(px,py-8,20,px,py-8,130);g.addColorStop(0,'#0000');g.addColorStop(1,'#000c');cx.fillStyle=g;cx.fillRect(0,0,320,200);
-cx.strokeStyle='#9a978c44';cx.lineWidth=.5;dust.forEach(d=>{cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1.5,d.y+4);cx.stroke()});
-const n=near();if(n&&canPlay()){cx.fillStyle='#d8d4c8';cx.font='6px monospace';cx.textAlign='center';cx.fillText('[E] '+n.l,Math.min(280,Math.max(40,n.x)),n.y-20)}}
-function near(){let b=null,bd=22;tg().forEach(t=>{const d=Math.hypot(t.x-S.x,t.y-S.y);if(d<bd){bd=d;b=t}});return b}
-function blocked(x,y){if(x<5||x>315||y<14||y>197)return true;const a=x-3,b=y-3;if(R.some(r=>a<r[0]+r[2]&&a+6>r[0]&&b<r[1]+r[3]&&b+3>r[1]))return true;return W.some(w=>a<w.x+4&&a+6>w.x-4&&b<w.y&&b+3>w.y-4)}
-let mv=false,last=0;
-const canPlay=()=>S.ph==='game'&&!anyOv()&&!D&&!CB;
-function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;T+=dt;dust.forEach(d=>{d.y+=d.s*dt;d.x-=d.s*dt*.3;if(d.y>200){d.y=0;d.x=Math.random()*320}});
-mv=false;if(canPlay()){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);if(dx||dy){const l=Math.hypot(dx,dy),sp=55*dt;let nx=S.x+dx/l*sp,ny=S.y+dy/l*sp;if(!blocked(nx,S.y))S.x=nx;if(!blocked(S.x,ny))S.y=ny;mv=true}}
-if(D&&!D.done&&!anyOv()){D.a+=dt;while(D.a>.025&&!D.done){D.a-=.025;D.p++;if(D.p%2==0)blip(D.l[D.i][0]);if(D.p>=D.l[D.i][1].length)D.done=true}$('tx').textContent=D.l[D.i][1].slice(0,D.p);$('cont').style.visibility=D.done?'visible':'hidden'}
-draw();requestAnimationFrame(loop)}
-/* dialogue */
-let D=null,CB=null;
-function say(l,cb){D={l,i:0,cb};line()}
-function line(){const[s,t]=D.l[D.i];D.p=0;D.a=0;D.done=false;$('who').textContent=s;$('tx').textContent='';$('cont').style.visibility='hidden';$('dlg').classList.add('on');const c=$('pc').getContext('2d');c.fillStyle='#111';c.fillRect(0,0,24,30);const p=(SP[s]||SP.DETECTIVE).p;person(c,12,28,p[0],p[1],p[2])}
-function adv(){if(!D)return;if(!D.done){D.p=9999;D.done=true;$('tx').textContent=D.l[D.i][1];$('cont').style.visibility='visible';return}D.i++;if(D.i>=D.l.length){const cb=D.cb;D=null;$('dlg').classList.remove('on');cb&&cb()}else line()}
-function choose(opts,cb){const c=$('chs');c.innerHTML='';opts.forEach((q,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+q;b.onclick=()=>pick(i);c.appendChild(b)});const l=document.createElement('button');l.textContent='[ Leave ]';l.onclick=()=>pick(-1);c.appendChild(l);c.classList.add('on');CB=cb}
-function pick(i){if(!CB)return;const cb=CB;CB=null;$('chs').classList.remove('on');if(i>=0)cb(i)}
-function ask(wi){const w=W[wi],a=S.asked[wi]=S.asked[wi]||[];if(a.length>=3){say([[w.n,"That's all I've got to say, detective."]]);return}
-const s=a.length,st=w.st[s];choose(st.map(o=>o[1].split('|')[0]),i=>{const ls=st[i][1].split('|').map((t,j)=>[j%2?w.n:'DETECTIVE',t]);say(ls,()=>{a.push(i);pin('w'+wi+s+i);save();ask(wi)})})}
-function pin(id){if(S.ev.includes(id))return;S.ev.push(id);save();hud();const t=$('toast');t.textContent='PINNED TO BOARD: '+EV[id].t;t.style.display='block';click();setTimeout(()=>t.style.display='none',2600)}
-function hud(){$('evc').textContent=S.ev.length+'/12'}
-/* board */
+function music(){const bass=[110,87.3,73.4,82.4],sc=[220,261.6,293.7,329.6,392,440,523];let n=0;setInterval(()=>{if(s.mute||!AC)return;const t=AC.currentTime;tone(bass[(n>>2)%4],t,.9,.16,'triangle');if(n%2==0&&Math.random()<.65)tone(sc[Math.random()*7|0],t+.2,1.1,.045,'sine');n++},650)}
+function blip(k){const v=VO[k||'det'];if(s.mute||!AC)return;tone(v[0]*(1+Math.random()*.1),AC.currentTime,v[1],.05,v[2])}
+function clk(){if(s.mute||!AC)return;tone(1200,AC.currentTime,.03,.06,'square');tone(300,AC.currentTime+.05,.05,.06,'square')}
+function muteUI(){document.querySelectorAll('.mu').forEach(b=>b.textContent=s.mute?'UNMUTE':'MUTE')}
+function toggleMute(){s.mute=s.mute?0:1;if(mg)mg.gain.value=s.mute?0:1;muteUI();save()}
+/* ---------- sprites ---------- */
+const LOOK={
+det:{pn:'#1c1c1f',co:'#2d2d31',hl:'#a09d8e',tie:'#cfcab8',sk:'#aaa799',hr:'#141414',ht:'f',hc:'#232326',hb:'#d4d0be'},
+old:{pn:'#2b2a25',co:'#3d392f',sk:'#8c897d',hr:'#8a8982',ht:'s',hc:'#2a2926',bd:3,bc:'#a0a098',st:1},
+crooks:{pn:'#26282a',co:'#363a35',sk:'#4f4d48',hr:'#151515',ht:'c',hc:'#1f2020',bd:2,bc:'#181817'},
+young:{pn:'#2c3036',co:'#55554e',ov:'#2c3036',sk:'#8f8c80',hr:'#3a362f',bd:1,bc:'#6e6b62'},
+obs:{pn:'#25262a',co:'#40443f',sk:'#8c897d',hr:'#3b3a35',ht:'s',hc:'#2a2926',tie:'#8d8b80'},
+blunt:{pn:'#2b2a25',co:'#4a3f33',sk:'#8f8c80',hr:'#2b2a26',bd:1,bc:'#55524a',ht:'c',hc:'#33302a'},
+candy:{pn:'#2b2a25',co:'#3a3835',sk:'#8c897d',hr:'#a0a098',ht:'s',hc:'#2a2926',st:1},
+lennie:{pn:'#2c3036',co:'#4a4a42',ov:'#2c3036',sk:'#8f8c80',hr:'#3a362f',wide:1},
+wife:{pn:'#3a3338',co:'#5a4a62',sk:'#9a978a',hr:'#8a8466',long:1,dr:1}};
+function man(g,x,y,o,f){x|=0;y|=0;const s=o.st?1:0,b=f?1:0;
+R(g,x+1,y+17,10,2,'rgba(0,0,0,.5)');if(o.hl)R(g,x-1,y+18,14,1,'rgba(220,215,190,.18)');
+if(o.dr){R(g,x+2,y+12,8,5,o.co);R(g,x+3,y+17-b,2,1,o.sk);R(g,x+7,y+17,2,1,o.sk)}else{R(g,x+3,y+13,2,5-b,o.pn);R(g,x+7,y+13,2,4+b,o.pn)}
+R(g,x+2,y+6+s,8,8-s,o.co);R(g,x+1,y+7+s,1,5,o.co);R(g,x+10,y+7+s,1,5,o.co);
+if(o.wide){R(g,x,y+7,1,6,o.co);R(g,x+11,y+7,1,6,o.co);R(g,x+1,y+6,10,1,o.co)}
+if(o.ov){R(g,x+3,y+7+s,1,7,o.ov);R(g,x+8,y+7+s,1,7,o.ov);R(g,x+3,y+12,6,2,o.ov)}
+if(o.hl){R(g,x+2,y+6+s,8,1,o.hl);R(g,x+2,y+6+s,1,7,o.hl);R(g,x+1,y+7+s,1,4,o.hl)}
+if(o.tie)R(g,x+5,y+7+s,2,5,o.tie);
+R(g,x+3,y+1+s,6,5,o.sk);R(g,x+3,y+1+s,6,2,o.hr);if(o.long){R(g,x+2,y+2+s,1,8,o.hr);R(g,x+9,y+2+s,1,8,o.hr)}R(g,x+4,y+3+s,1,1,'#0a0a0a');R(g,x+7,y+3+s,1,1,'#0a0a0a');
+const d=o.bd;if(d==1)R(g,x+3,y+4+s,6,2,o.bc);if(d==2){R(g,x+3,y+4+s,6,3,o.bc);R(g,x+4,y+7+s,4,1,o.bc)}if(d==3){R(g,x+3,y+4+s,6,3,o.bc);R(g,x+4,y+7+s,4,5,o.bc)}
+if(o.ht=='f'){R(g,x,y+1+s,12,1,o.hc);R(g,x,y+1+s,3,1,o.hl);R(g,x+3,y-2+s,6,3,o.hc);R(g,x+3,y+s,6,1,o.hb);R(g,x+3,y-2+s,6,1,o.hl)}
+else if(o.ht=='s'){R(g,x+1,y+1+s,10,1,o.hc);R(g,x+3,y-1+s,6,2,o.hc)}
+else if(o.ht=='c'){R(g,x+3,y+s,7,2,o.hc);R(g,x+8,y+2+s,3,1,o.hc)}}
+function portrait(g,o){R(g,0,0,16,26,'#151613');const r=g.createRadialGradient(8,12,1,8,12,12);r.addColorStop(0,'rgba(180,170,120,.25)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,16,26);man(g,2,5,o,0)}
+(function(){const g=$('#tc').getContext('2d');['det','young','obs','blunt','old'].forEach((k,i)=>man(g,i*16+2,6,LOOK[k],0))})();
+/* ---------- map ---------- */
+const bg=document.createElement('canvas');bg.width=W;bg.height=H;
+let sd=7;const rnd=()=>(sd=sd*16807%2147483647)/2147483647;
+function bld(g,x,y,w,h,wall,roof,win,lb){R(g,x,y,w,h,wall);for(let i=x+3;i<x+w;i+=4)R(g,i,y,1,h,'rgba(0,0,0,.25)');
+R(g,x-2,y-4,w+4,14,roof);R(g,x-2,y+10,w+4,1,'#000');R(g,x,y+h,w,3,'rgba(0,0,0,.4)');R(g,x+w/2-4,y+h-11,8,11,'#080808');
+for(let i=x+6;i<x+w-10;i+=w>40?24:99){R(g,i-1,y+17,10,8,'#111');R(g,i,y+18,8,6,win)}
+g.fillStyle='#a09d90';g.font='bold 6px monospace';g.textAlign='center';g.fillText(lb,x+w/2,y+6)}
+(function(){const g=bg.getContext('2d');R(g,0,0,W,H,'#1b1d18');
+for(let i=0;i<1000;i++)R(g,rnd()*W,rnd()*H,1,1,rnd()<.5?'#23261f':'#161813');
+R(g,100,68,220,60,'#25251e');R(g,288,68,32,124,'#25251e');
+R(g,112,152,176,40,'#1a221c');for(let x=116;x<288;x+=8)R(g,x,154,2,36,'#222c24');
+R(g,112,144,176,2,'#5a5648');R(g,112,148,176,1,'#3c382f');for(let x=112;x<=288;x+=16)R(g,x,141,2,9,'#4a4538');
+bld(g,16,16,80,48,'#34332f','#17171a','#5e5a3c','BUNKHOUSE');bld(g,128,16,80,48,'#363631','#161619','#5e5a3c','BARN');
+bld(g,224,16,48,48,'#2f322d','#17181a','#4c5844','STABLE');bld(g,272,16,32,48,'#2b2a2e','#151518','#4c5844',`CROOKS' ROOM`);
+bld(g,16,128,64,48,'#302c34','#161519','#55495f','DETECTIVE OFFICE');
+R(g,50,66,12,8,'#3d382e');R(g,50,69,12,1,'#1a1a18');R(g,150,64,14,10,'#4a4538');R(g,150,68,14,1,'#2a271f');R(g,157,64,1,10,'#2a271f');
+R(g,166,67,8,7,'#44402f');R(g,284,66,10,8,'#3a3a3a');R(g,285,67,2,5,'#6a6458');R(g,288,67,2,5,'#5d6656');R(g,291,67,2,5,'#625a6a');
+R(g,228,68,16,6,'#3a3a36');R(g,296,150,2,22,'#4a4538');R(g,312,150,2,22,'#4a4538');R(g,298,150,14,5,'#3a362d');
+const r=g.createRadialGradient(205,100,2,205,100,60);r.addColorStop(0,'rgba(190,175,100,.16)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(100,50,210,100)})();
+const SOL=[[16,16,80,48],[128,16,80,48],[224,16,48,48],[272,16,32,48],[16,128,64,48],[112,142,176,6]];
+const IT=[...E.map(e=>({t:'e',id:e[0],x:e[5],y:e[6]})),...W4.map((w,i)=>({t:'n',i,x:w.x,y:w.y})),{t:'o',x:48,y:186}];
+const P={x:s.x,y:s.y},K={};
+const hit=(x,y)=>x<8||x>312||y<10||y>189||SOL.some(r=>x+4>r[0]&&x-4<r[0]+r[2]&&y>r[1]&&y-3<r[1]+r[3])||IT.some(i=>i.t=='n'&&Math.abs(x-i.x)<9&&Math.abs(y-i.y)<4);
+const zone=(x,y)=>y>148&&x<288?'FENCE / FIELD':x>288&&y>100?'RANCH ENTRANCE':x<110&&y>100?'DETECTIVE OFFICE':y<80&&x<110?'BUNKHOUSE':y<80&&x<216?'BARN':y<80&&x<272?'STABLE':y<80?`CROOKS' ROOM`:'WORK YARD';
+const busy=()=>!!document.querySelector('.ov.on,#db.on');
+let near=null,lz='',last=0;
+function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;
+if(!busy()&&s.started){let dx=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0),dy=(K.s||K.arrowdown?1:0)-(K.w||K.arrowup?1:0);
+if(dx&&dy){dx*=.707;dy*=.707}P.m=!!(dx||dy);const v=72*dt;if(dx&&!hit(P.x+dx*v,P.y))P.x+=dx*v;if(dy&&!hit(P.x,P.y+dy*v))P.y+=dy*v}else P.m=false;
+near=null;let bd=22;IT.forEach(i=>{const d=Math.hypot(P.x-i.x,P.y-i.y);if(d<bd){bd=d;near=i}});
+$('#pr').textContent=!busy()&&near&&s.started?'[E] '+(near.t=='n'?'TALK':near.t=='o'?'CASE BOARD':'EXAMINE'):'';
+const z=zone(P.x,P.y);if(z!=lz){lz=z;$('#ar').textContent=z}
+c.drawImage(bg,0,0);const pul=.5+.5*Math.sin(t/300);
+IT.forEach(i=>{if(i.t=='o'||i.t=='e'&&!s.ev.includes(i.id)||i.t=='n'&&s.asked[i.i].length<3){c.fillStyle=`rgba(205,195,125,${.35+.6*pul})`;c.fillRect(i.x-1,i.y-(i.t=='n'?30:13)|0,3,3)}});
+const fr=P.m?(t/140|0)%2:0;
+[{y:P.y,d:()=>man(c,P.x-6,P.y-18,LOOK.det,fr)},...IT.filter(i=>i.t=='n').map(i=>({y:i.y,d:()=>man(c,i.x-6,i.y-18,LOOK[W4[i.i].k],0)}))].sort((a,b)=>a.y-b.y).forEach(e=>e.d());
+requestAnimationFrame(loop)}
+/* ---------- text & dialogue ---------- */
+let tw=null,dlg=null,ivTok=0;
+const stopTw=()=>{if(tw){clearInterval(tw.h);tw=null}};
+function type(e,t,cb,v){stopTw();e.textContent='';let i=0;tw={e,t,cb};tw.h=setInterval(()=>{e.textContent=t.slice(0,++i);if(i%2==0)blip(v);if(i>=t.length)fin()},18)}
+function fin(){if(!tw)return;const q=tw;stopTw();q.e.textContent=q.t;q.cb&&q.cb()}
+function say(box,e,lines,cb,sp){dlg={box,e,lines,i:0,cb};box.classList.add('on');if(sp)$('#dsp').textContent=sp;type(e,lines[0])}
+function adv(){if(tw){fin();return}if(!dlg)return;if(++dlg.i>=dlg.lines.length){const d=dlg;dlg=null;d.box.classList.remove('on');d.cb&&d.cb()}else type(dlg.e,dlg.lines[dlg.i])}
+const open=id=>{document.querySelectorAll('.ov.on').forEach(o=>o.classList.remove('on'));$(id).classList.add('on')};
+const closeAll=()=>{stopTw();dlg=null;ivTok++;document.querySelectorAll('.ov.on,#db.on').forEach(o=>o.classList.remove('on'));save()};
+function btn(t,f,k='b'){const b=document.createElement('button');b.className=k;b.textContent=t;b.onclick=f;return b}
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2800)}
+function ui(){const u=s.ev.length>=12;$('#bf').disabled=$('#bf2').disabled=!u;if(u&&!s.unl){s.unl=1;save();toast('FINAL CASE UNLOCKED')}$('#tcn').style.display=s.started?'':'none'}
+function pin(id){if(s.ev.includes(id))return;s.ev.push(id);save();toast('PINNED: '+EV[id].t);clk();ui()}
+/* ---------- flow ---------- */
+function startPlay(){document.body.classList.add('g');closeAll();ui()}
+$('#tb').onclick=()=>{audio();if(s.started&&!confirm('Start a new investigation? Saved progress will be erased.'))return;const m=s.mute;s=fresh();s.mute=m;s.started=1;save();Object.assign(P,{x:s.x,y:s.y});open('#intro');
+say($('#intro'),$('#itx'),[`California. 1930s.`,`The ranch hands work, sleep, eat, and move on.`,`But beneath the routine lies another system — one built from race, age, ability, money, gender, and fear.`,`Four people live somewhere near the bottom of that system.`,`My job isn't to decide who's strongest.`,`It's to find out who has the least power.`],()=>{startPlay();say($('#db'),$('#dt'),[`I've seen plenty of hard places in the city. But this ranch has its own kind of trouble. I'm here to find out who has the least say in their own life.`,`Walk the ranch. Talk to the hands. Pin what I find to the board. Twelve pieces of evidence, and I can make my case.`],ui,'DETECTIVE')})};
+$('#intro').onclick=adv;$('#db').onclick=adv;
+$('#tcn').onclick=()=>{audio();Object.assign(P,{x:s.x,y:s.y});startPlay()};$('#th').onclick=()=>open('#how');
+$('#hb').onclick=()=>s.started&&document.body.classList.contains('g')?open('#mn'):open('#title');
+$('#bm').onclick=()=>open('#mn');$('#bb').onclick=$('#m2').onclick=()=>{open('#bd');rb()};$('#bc2').onclick=$('#m1').onclick=closeAll;
+$('#m3').onclick=()=>open('#how');$('#bf').onclick=$('#bf2').onclick=f1;$('#bmu').onclick=$('#m5').onclick=toggleMute;
+$('#m4').onclick=()=>{if(confirm('Wipe the investigation and start over?')){try{localStorage.removeItem(SK)}catch(x){}location.reload()}};
+function interact(){if(!near||busy()||!s.started)return;const i=near;
+if(i.t=='e'){const e=E.find(x=>x[0]==i.id);say($('#db'),$('#dt'),[e[3],'EVIDENCE: '+e[2]],()=>{pin(e[0])},'DETECTIVE')}
+else if(i.t=='o'){open('#bd');rb()}else talk(i.i)}
+/* ---------- interviews ---------- */
+let cur;
+function msg(k,t,v){const d=document.createElement('div');d.className='m '+k;const b=document.createElement('b'),p=document.createElement('span');b.textContent=k=='D'?'DETECTIVE':W4[cur].n;p.textContent=t;d.append(b,p);$('#log').append(d);$('#log').scrollTop=1e5;return p}
+const lines=(wi,st,o)=>W4[wi].st[st][o][1].split('|');
+function talk(wi){cur=wi;open('#iv');ivTok++;$('#ivn').textContent=W4[wi].n;portrait($('#pc').getContext('2d'),LOOK[W4[wi].k]);
+$('#log').innerHTML='';s.asked[wi].forEach((o,st)=>lines(wi,st,o).forEach((t,j)=>msg(j%2?'A':'D',t)));rc()}
+function rc(){const a=s.asked[cur],h=$('#chs');h.innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(3-a.length);
+if(a.length<3)W4[cur].st[a.length].forEach((q,i)=>h.append(btn(q[1].split('|')[0],()=>ask(i),'b q')));else{const p=document.createElement('p');p.className='dim';p.textContent='He has nothing more to say.';h.append(p)}
+h.append(btn('LEAVE',closeAll,'b s'));ui()}
+function ask(i){const wi=cur,st=s.asked[wi].length,ls=lines(wi,st,i),tok=++ivTok;$('#chs').innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(2-st);let k=0;
+(function nx(){if(tok!=ivTok)return;if(k>=ls.length){s.asked[wi].push(i);pin('w'+wi+st+i);save();rc();return}const j=k++;type(msg(j%2?'A':'D',''),ls[j],()=>setTimeout(nx,350),j%2?W4[wi].k:'det')})()}
+/* ---------- board ---------- */
 let LK=[];
-const rot=id=>((id.split('').reduce((a,c)=>a+c.charCodeAt(0)*7,0)%9)-4)*.9;
-const cnt=c=>S.ev.filter(i=>EV[i].ch===c).length,nInf=c=>{const n=cnt(c);return n>=3?2:n>=2?1:0};
-const card=(id,cls,h,sub)=>`<div class="card ${cls}${S.seen.includes(id)?'':' drop'}" id="${id}" style="--r:${rot(id)}deg" onclick="det('${id}')"><i class="pin"></i><b>${h}</b>${sub?'<small>'+sub+'</small>':''}</div>`;
-function board(){let h='',x='';LK=[];const ids=[];
-for(const c in CH){const evs=S.ev.filter(i=>EV[i].ch===c),k=nInf(c);h+='<div class="col">';
-evs.forEach((id,j)=>{h+=card('c_'+id,'ev',EV[id].t,EV[id].s);ids.push('c_'+id);if(k)LK.push(['c_'+id,'i_'+c+'_'+Math.min(j<2?0:1,k-1)])});
-if(!evs.length)h+='<div style="color:#6d655a;text-align:center;margin:20px">no evidence yet</div>';
-for(let j=0;j<k;j++){h+=card('i_'+c+'_'+j,'inf','Inference: '+INF[c][j]);ids.push('i_'+c+'_'+j);LK.push(['i_'+c+'_'+j,'h_'+c])}
-h+=card('h_'+c,'hd',CH[c],evs.length+' on file');ids.push('h_'+c);
-for(let j=0;j<k;j++){h+=card('p_'+c+'_'+j,'chip',CAT[c][j]);ids.push('p_'+c+'_'+j);LK.push(['h_'+c,'p_'+c+'_'+j])}
+const rot=id=>((id.split('').reduce((a,x)=>a+x.charCodeAt(0)*7,0)%9)-4)*.8;
+const cnt=k=>s.ev.filter(i=>EV[i].ch===k).length,nInf=k=>{const n=cnt(k);return n>=3?2:n>=2?1:0};
+const card=(id,cls,h,sub)=>`<div class="card ${cls}${s.seen.includes(id)?'':' drop'}" id="${id}" tabindex="0" style="--r:${rot(id)}deg" onclick="det('${id}')" onkeydown="if(event.key==='Enter'){det('${id}');event.stopPropagation()}"><i class="pin"></i>${h}${sub?'<small>'+sub+'</small>':''}</div>`;
+function rb(){let h='',x='';LK=[];const ids=[];
+for(const k in CH){const evs=s.ev.filter(i=>EV[i].ch===k),n=nInf(k);h+='<div class="col">';
+evs.forEach((id,j)=>{h+=card('c_'+id,'ev','<b>'+EV[id].t+'</b>',EV[id].s);ids.push('c_'+id);if(n)LK.push(['c_'+id,'i_'+k+'_'+Math.min(j<2?0:1,n-1)])});
+for(let j=0;j<n;j++){h+=card('i_'+k+'_'+j,'inf','<b>INFERENCE</b>'+INF[k][j]);ids.push('i_'+k+'_'+j);LK.push(['i_'+k+'_'+j,'h_'+k])}
+h+=card('h_'+k,'hd','<canvas id="pt_'+k+'" width="16" height="26"></canvas>'+CH[k],evs.length+' on file');ids.push('h_'+k);
+for(let j=0;j<n;j++){h+=card('p_'+k+'_'+j,'chip',CAT[k][j]);ids.push('p_'+k+'_'+j);LK.push(['h_'+k,'p_'+k+'_'+j])}
 h+='</div>'}
 XC.forEach(z=>{if(nInf(z[0])&&nInf(z[1])){LK.push(['h_'+z[0],'h_'+z[1]]);x+=`<div class="xn"><b>${CH[z[0]]} ↔ ${CH[z[1]]}:</b> ${z[2]}</div>`}});
-$('cols').innerHTML=h;$('xn').innerHTML=x;$('fbtn').style.display=S.ev.length>=12?'':'none';
-requestAnimationFrame(()=>{threads();ids.forEach(i=>{if(!S.seen.includes(i))S.seen.push(i)});LK.forEach(l=>{const k=l.join('>');if(!S.seen.includes(k))S.seen.push(k)});save()})}
-function threads(){const bc=$('bc'),svg=$('th'),cr=bc.getBoundingClientRect();svg.setAttribute('width',bc.scrollWidth);svg.setAttribute('height',bc.scrollHeight);let h='';
-LK.forEach(l=>{const a=$(l[0]),b=$(l[1]);if(!a||!b)return;const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect(),x1=ra.left+ra.width/2-cr.left,y1=ra.top-cr.top+2,x2=rb.left+rb.width/2-cr.left,y2=rb.top-cr.top+2,n=S.seen.includes(l.join('>'))?'':'n';h+=`<path pathLength="1" class="${n}" d="M${x1} ${y1} Q${(x1+x2)/2} ${Math.max(y1,y2)+30} ${x2} ${y2}"/>`});svg.innerHTML=h}
-function openBoard(){board();show('bo')}
-addEventListener('resize',()=>{if($('bo').classList.contains('on'))threads()});
+if(!s.ev.length)x='<div class="xn dim">The board is bare. Walk the ranch, examine the places, and question the hands.</div>';
+$('#cols').innerHTML=h;$('#xn').innerHTML=x;
+requestAnimationFrame(()=>{for(const k in CH)portrait($('#pt_'+k).getContext('2d'),LOOK[k]);threads();ids.forEach(i=>{if(!s.seen.includes(i))s.seen.push(i)});LK.forEach(l=>{const k=l.join('>');if(!s.seen.includes(k))s.seen.push(k)});save()})}
+function threads(){const bc=$('#bc'),svg=$('#th2'),cr=bc.getBoundingClientRect();svg.setAttribute('width',bc.scrollWidth);svg.setAttribute('height',bc.scrollHeight);let h='';
+LK.forEach((l,n)=>{const a=$('#'+l[0]),b=$('#'+l[1]);if(!a||!b)return;const ra=a.getBoundingClientRect(),rb=b.getBoundingClientRect(),x1=ra.left+ra.width/2-cr.left,y1=ra.top-cr.top,x2=rb.left+rb.width/2-cr.left,y2=rb.top-cr.top,nw=s.seen.includes(l.join('>'))?'':'n',sw=(n%2?1:-1)*(60+n%3*15);
+h+=`<path pathLength="1" class="${nw}" d="M${x1} ${y1} Q${(x1+x2)/2+sw} ${(y1+y2)/2+20} ${x2} ${y2}"/>`});svg.innerHTML=h}
+addEventListener('resize',()=>{if($('#bd').classList.contains('on'))threads()});
 function det(id){const p=id.split('_');let h='';
-if(p[0]==='c'){const e=EV[p[1]],c=e.ch,j=S.ev.filter(i=>EV[i].ch===c).indexOf(p[1]),k=nInf(c);h=`<h3>${e.t}</h3><p class="q">“${e.o}”</p><p>SOURCE: ${e.s}<br>CHARACTER: ${CH[c]}<br>POWER CATEGORY: ${e.cat}</p>`+(k?`<p class="infx"><b>INFERENCE:</b> ${INF[c][Math.min(j<2?0:1,k-1)]}</p>`:'<p><i>You need more evidence on this person before this means anything.</i></p>')}
-else if(p[0]==='i'){h=`<h3>INFERENCE: ${CH[p[1]]}</h3><p class="infx">${INF[p[1]][p[2]]}</p><p>Built from:</p><ul>${S.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+'</li>').join('')}</ul>`}
-else if(p[0]==='p'){const c=CAT[p[1]][p[2]];h=`<h3>${c}</h3><p>${CD[c]}</p><p>Linked to ${CH[p[1]]}. This is a question to weigh, not a score.</p>`}
-else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${S.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' <small>('+EV[i].s+')</small></li>').join('')||'<li>none yet</li>'}</ul>`;
-$('mdc').innerHTML=h+'<button onclick="hide(\'md\')">CLOSE</button>';show('md')}
-/* final */
-const QT={crooks:"Can think, but cannot escape racial exclusion.",candy:"Can work, but cannot escape economic insecurity.",lennie:"Can overpower others, but cannot control his own strength.",wife:"Can influence others, but cannot control her own circumstances."};
-const IP={crooks:"Choosing Crooks emphasizes the power of racial exclusion. He can think, work, and understand the world around him, but none of those abilities give him equal standing.",candy:"Choosing Candy emphasizes economic vulnerability. His age and missing hand make his future depend on whether the ranch still considers him useful.",lennie:"Choosing Lennie emphasizes the difference between physical strength and personal agency. He can overpower others, but he cannot reliably control his choices or future.",wife:"Choosing Curley's wife emphasizes gender and isolation. She has some influence over the men around her, but little control over her own circumstances or identity."};
-function openFinal(){board();show('bo');show('fn');S.fin?fin2(S.fin):fin1()}
-function fin1(){$('fnc').innerHTML=`<h1 class="c" style="font-size:2em">FINAL CASE</h1><p class="big">POWER ISN'T THE SAME AS FREEDOM.</p><div class="g4">${Object.keys(CH).map(c=>`<div><b>${CH[c]}</b><br>“${QT[c]}”</div>`).join('')}</div><h2 class="c" style="color:#e8d9a0">WHO HAS THE LEAST POWER?</h2><div class="c">${Object.keys(CH).map(c=>`<button onclick="verdict('${c}')">${CH[c]}</button>`).join('')}</div><div class="c"><button onclick="hide('fn')">BACK TO BOARD</button></div>`}
-function verdict(c){S.fin=c;save();fin2(c)}
-function fin2(c){$('fnc').innerHTML=`<div class="paper"><h3>${IP[c]}</h3><p><b>Your conclusion is not simply a matter of choosing the right person.</b></p><p>The question is what you mean by power.<br>Who can control their own future?<br>Who has a voice?<br>Who can leave?<br>Who has someone to protect them?<br>Who is allowed to belong?</p><h3>STEINBECK'S QUESTION</h3><p>If power means the ability to control your own life, who on the ranch truly possesses it?</p><p>Crooks can think but cannot escape racism.<br>Candy can work but cannot escape aging.<br>Lennie can overpower others but cannot control his own strength.<br>Curley's Wife can influence others but cannot control her own circumstances.</p><p>Perhaps the tragedy is not that these people are simply weak.<br>It is that the world decides which kinds of strength count.</p><button onclick="openEssay()">WRITE FINAL CASE REPORT</button><button onclick="fin1()">RECONSIDER</button><button onclick="hide('fn')">BACK TO BOARD</button></div>`}
-function openEssay(){$('esy').value=S.essay;show('es')}
-/* flow */
-const IL=["California. 1930s.","The ranch hands work, sleep, eat, and move on.","But beneath the routine lies another system — one built from race, age, ability, money, gender, and fear.","Four people live somewhere near the bottom of that system.","My job isn't to decide who's strongest.","It's to find out who has the least power."];let ii=0;
-function introShow(){$('itx').textContent=IL[ii]}
-function introNext(){if(!$('in').classList.contains('on'))return;if(++ii>=IL.length)startGame();else introShow()}
-function startGame(){hide('in');S.ph='game';save();hud();say([['DETECTIVE',"I've seen plenty of hard places in the city. But this ranch has its own kind of trouble. I'm here to find out who has the least say in their own life."],['DETECTIVE',"Walk the ranch. Talk to the hands. Pin what I find to the board. Twelve pieces of evidence, and I can make my case."]])}
-function begin(){audio();if(S.ph==='game'&&!confirm('Start a new investigation? Saved progress will be erased.'))return;const m=S.mute;S=fresh();S.mute=m;save();hide('ti');ii=0;introShow();show('in')}
-function cont(){audio();hide('ti');hud()}
-function pause(o){o?show('pa'):hide('pa')}
-function restart(){if(confirm('Wipe the investigation and start over?')){try{localStorage.removeItem(KEY)}catch(e){}location.reload()}}
-function interact(){const n=near();if(n)n.f()}
-addEventListener('click',e=>{audio();if(e.target.tagName==='BUTTON')e.target.blur()});
-addEventListener('keydown',e=>{audio();if(e.target.tagName==='TEXTAREA'){if(e.key==='Escape')e.target.blur();return}
-const k=e.key.toLowerCase();keys[k]=1;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();
-if(k==='escape'){for(const i of['md','es','fn','bo','how']){if($(i).classList.contains('on')){hide(i);return}}if(S.ph==='game'&&!$('ti').classList.contains('on'))pause(!$('pa').classList.contains('on'));return}
-if(k===' '||k==='enter'){if($('in').classList.contains('on')){introNext();return}if(D){adv();return}if(k==='enter'&&canPlay())interact();return}
-if(CB&&(k==='1'||k==='2')){pick(+k-1);return}
-if(k==='e'&&canPlay())interact();
-if(k==='b'&&S.ph==='game'&&!D&&!CB&&!$('ti').classList.contains('on')){$('bo').classList.contains('on')?hide('bo'):openBoard()}});
-addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
-addEventListener('blur',()=>{for(const k in keys)keys[k]=0});
-$('dlg').onclick=adv;
-if(S.ph==='game')$('bcont').style.display='';
-document.querySelectorAll('.mu').forEach(b=>b.textContent=S.mute?'UNMUTE':'MUTE');hud();requestAnimationFrame(loop);
+if(p[0]==='c'){const e=EV[p[1]],k=e.ch,j=s.ev.filter(i=>EV[i].ch===k).indexOf(p[1]),n=nInf(k);h=`<h3>${e.t}</h3><p class="q">“${e.o}”</p><p>SOURCE: ${e.s}<br>CHARACTER: ${CH[k]}<br>POWER CATEGORY: ${e.cat}</p>`+(n?`<p class="infx"><b>INFERENCE:</b> ${INF[k][Math.min(j<2?0:1,n-1)]}</p>`:'<p><i>Not enough evidence on this person yet to draw an inference.</i></p>')}
+else if(p[0]==='i')h=`<h3>INFERENCE: ${CH[p[1]]}</h3><p class="infx">${INF[p[1]][p[2]]}</p><p>Built from:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+'</li>').join('')}</ul>`;
+else if(p[0]==='p'){const k=CAT[p[1]][p[2]];h=`<h3>${k}</h3><p>${CD[k]}</p><p>Linked to ${CH[p[1]]}. A question to weigh, not a score.</p>`}
+else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' ('+EV[i].s+')</li>').join('')||'<li>none yet</li>'}</ul>`;
+$('#mdc').innerHTML=h;$('#mdc').append(btn('CLOSE',()=>$('#md').classList.remove('on')));$('#md').classList.add('on')}
+/* ---------- final case ---------- */
+function f1(){if(s.ev.length<12)return;rb();$('#bd').classList.add('on');const b=$('#fnb');b.innerHTML='';
+b.innerHTML=`<h1 style="font-size:22px">FINAL CASE</h1><p class="big">POWER ISN'T THE SAME AS FREEDOM.</p><div class="g4">${Object.keys(CH).map(k=>`<div><b>${CH[k]}</b><br>“${QT[k]}”</div>`).join('')}</div><p class="q2">WHO HAS THE LEAST POWER?</p>`;
+Object.keys(CH).forEach(k=>b.append(btn(CH[k],()=>{s.fin=k;save();openEssay()})));b.append(document.createElement('br'),btn('BACK TO BOARD',()=>$('#fn').classList.remove('on'),'b s'));$('#fn').classList.add('on')}
+function openEssay(){open('#es');$('#jd').textContent=CH[s.fin];$('#esy').value=s.essay}
+$('#esy').oninput=e=>{s.essay=e.target.value;save()};
+$('#eb1').onclick=()=>{open('#bd');rb()};$('#eb2').onclick=closeAll;$('#eb3').onclick=()=>{open('#bd');f1()};
+/* ---------- input ---------- */
+addEventListener('click',e=>{audio();const b=e.target.closest('button');b&&b.blur()});
+addEventListener('keydown',e=>{audio();const k=e.key.toLowerCase(),ta=/TEXTAREA/.test(e.target.tagName);
+if(ta){if(k=='escape')e.target.blur();return}
+if(k==' '||k=='enter'){if(e.target.closest&&e.target.closest('.card'))return;if(tw||dlg){e.preventDefault();adv();return}if(s.started&&!busy()){e.preventDefault();interact()}return}
+if(k=='e'&&!busy()&&s.started){interact();return}
+if(k=='b'&&s.started&&!dlg){const bd=$('#bd');if(bd.classList.contains('on'))closeAll();else if(!busy()){open('#bd');rb()}return}
+if(k=='escape'){if($('#md').classList.contains('on')){$('#md').classList.remove('on');return}if($('#fn').classList.contains('on')){$('#fn').classList.remove('on');return}const o=document.querySelector('.ov.on');if(dlg)return;if(!o&&s.started)open('#mn');else if(o&&!['title','intro'].includes(o.id))closeAll()}
+K[k]=1;if(k.startsWith('arrow'))e.preventDefault()});
+addEventListener('keyup',e=>K[e.key.toLowerCase()]=0);addEventListener('blur',()=>{for(const k in K)K[k]=0});
+cv.onclick=()=>interact();
+setInterval(()=>{if(s.started){s.x=P.x;s.y=P.y;save()}},3000);
+muteUI();ui();requestAnimationFrame(loop);
 </script></body></html>
