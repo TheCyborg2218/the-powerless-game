@@ -113,10 +113,115 @@ const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
 const EV={};E.forEach(e=>EV[e[0]]={ch:e[1],t:e[2],o:e[3],s:e[4],cat:CAT[e[1]][0]});
 W4.forEach((w,wi)=>w.st.forEach((st,n)=>st.forEach((o,i)=>EV['w'+wi+n+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,cat:CAT[o[0]][n%2]})));
 /* ---------- audio ---------- */
-let AC,mg;const VO={det:[330,.03,'triangle'],young:[700,.035,'square'],obs:[260,.05,'triangle'],blunt:[190,.05,'square'],old:[130,.07,'triangle']};
-function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return}mg=AC.createGain();mg.gain.value=s.mute?0:1;mg.connect(AC.destination);music()}if(AC.state==='suspended')AC.resume()}
-function tone(f,t,d,v,w){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type=w;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.05)}
-// OPTIONAL: Replace this procedural music with a royalty-free local audio file.
+let AC, mg;
+const VO = {
+  det: [330, .03, 'triangle'],
+  young: [700, .035, 'square'],
+  obs: [260, .05, 'triangle'],
+  blunt: [190, .05, 'square'],
+  old: [130, .07, 'triangle']
+};
+
+function audio() {
+  if (!AC) {
+    try {
+      AC = new(window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      return;
+    }
+    mg = AC.createGain();
+    mg.gain.value = s.mute ? 0 : 1;
+    mg.connect(AC.destination);
+    music();
+  }
+  if (AC.state === 'suspended') AC.resume();
+}
+
+function tone(f, t, d, v, w, detune = 0) {
+  if (!AC) return;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = w;
+  o.frequency.value = f;
+  if (detune) o.detune.value = detune;
+
+  const a = Math.min(0.08, d * 0.3); // soft attack for long notes, fast for blips
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(v, t + a);
+  g.gain.exponentialRampToValueAtTime(.0001, t + d);
+
+  o.connect(g);
+  g.connect(mg);
+  o.start(t);
+  o.stop(t + d + 0.05);
+}
+
+// NOIR DETECTIVE THEME (Slow, tension-filled jazz/blues loop)
+function music() {
+  // Noir progression: Dm, Dm6, Gm, Bb7/A7 (Tension chords)
+  const bassRoots = [73.42, 69.30, 98.00, 110.00]; // D2, C#2, G2, A2
+  
+  // D Minor Blues / Pentatonic scale frequencies for a smoky lead melody
+  // Notes: D3, F3, G3, G#3 (blue note), A3, C4, D4, F4
+  const noirScale = [146.83, 174.61, 196.00, 207.65, 220.00, 261.63, 293.66, 349.23];
+  
+  let step = 0;
+
+  // 880ms interval = Slow ~68 BPM tempo
+  setInterval(() => {
+    if (s.mute || !AC) return;
+    const t = AC.currentTime;
+    
+    // 1. Deep, subtle Upright Bass pulse on beat 1 & 3
+    if (step % 2 === 0) {
+      const currentBass = bassRoots[(step >> 2) % 4];
+      tone(currentBass, t, 1.4, 0.22, 'triangle');
+      // Subtle fifth harmonic for acoustic bass feel
+      tone(currentBass * 1.5, t, 0.8, 0.05, 'sine');
+    }
+
+    // 2. Muted "Ride Cymbal" / Rain drop tick every beat with slight swing
+    const swingOffset = (step % 2 === 1) ? 0.06 : 0;
+    tone(2800 + Math.random() * 400, t + swingOffset, 0.03, 0.015, 'square');
+
+    // 3. Smoky "Muted Saxophone / Trumpet" melody (plays sparse, expressive notes)
+    if (Math.random() < 0.55) {
+      const noteFreq = noirScale[Math.floor(Math.random() * noirScale.length)];
+      
+      // Warm sine wave with subtle pitch detune for a vintage vinyl/noir feel
+      tone(noteFreq, t + 0.1, 1.2, 0.07, 'sine', (Math.random() - 0.5) * 15);
+      
+      // Add minor-6th / tritone harmony occasionally for extra mystery
+      if (Math.random() < 0.3) {
+        tone(noteFreq * 1.414, t + 0.25, 0.9, 0.03, 'sine'); // Tritone offset
+      }
+    }
+
+    step++;
+  }, 880);
+}
+
+function blip(k) {
+  const v = VO[k || 'det'];
+  if (s.mute || !AC) return;
+  tone(v[0] * (1 + Math.random() * .1), AC.currentTime, v[1], .05, v[2]);
+}
+
+function clk() {
+  if (s.mute || !AC) return;
+  tone(1200, AC.currentTime, .03, .06, 'square');
+  tone(300, AC.currentTime + .05, .05, .06, 'square');
+}
+
+function muteUI() {
+  document.querySelectorAll('.mu').forEach(b => b.textContent = s.mute ? 'UNMUTE' : 'MUTE');
+}
+
+function toggleMute() {
+  s.mute = s.mute ? 0 : 1;
+  if (mg) mg.gain.value = s.mute ? 0 : 1;
+  muteUI();
+  save();
+}
 function music(){const bass=[110,87.3,73.4,82.4],sc=[220,261.6,293.7,329.6,392,440,523];let n=0;setInterval(()=>{if(s.mute||!AC)return;const t=AC.currentTime;tone(bass[(n>>2)%4],t,.9,.16,'triangle');if(n%2==0&&Math.random()<.65)tone(sc[Math.random()*7|0],t+.2,1.1,.045,'sine');n++},650)}
 function blip(k){const v=VO[k||'det'];if(s.mute||!AC)return;tone(v[0]*(1+Math.random()*.1),AC.currentTime,v[1],.05,v[2])}
 function clk(){if(s.mute||!AC)return;tone(1200,AC.currentTime,.03,.06,'square');tone(300,AC.currentTime+.05,.05,.06,'square')}
