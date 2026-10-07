@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>The Powerless</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#d8d6cc;--dim:#8d8b80;--ln:#4a4a44;--y:#b7aa6a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;overflow:hidden;background:#0a0b09;color:var(--ink);font:22px/1.25 VT323,'Courier New',monospace}
+.px{font-family:'Press Start 2P','Courier New',monospace}.dim{color:var(--dim)}
+#app{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#cv{image-rendering:pixelated;width:min(100vw,calc(100vh*1.6667));aspect-ratio:320/192;box-shadow:0 0 80px #000}
+body::before{content:'';position:fixed;inset:0;z-index:20;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.75))}
+body::after{content:'';position:fixed;inset:-20px;z-index:21;pointer-events:none;opacity:.13;animation:gr .5s steps(4) infinite;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+#fl{position:fixed;inset:0;z-index:19;pointer-events:none;background:#c8c2a0;animation:fk 6s infinite}
+@keyframes gr{to{transform:translate(-14px,10px)}}@keyframes fk{0%,100%{opacity:.02}7%{opacity:.05}8%{opacity:.01}45%{opacity:.03}47%{opacity:.07}49%{opacity:.02}80%{opacity:.04}}
+@keyframes fi{from{opacity:0}}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(10,10,9,.93);z-index:5;padding:16px;overflow:auto;text-align:center}
+.ov.on{display:flex;animation:fi .5s}#title{background:rgba(10,10,9,.78)}
+h1{font:clamp(22px,6vw,50px) 'Press Start 2P',monospace;margin:14px 0 8px;text-shadow:3px 3px #000;letter-spacing:2px}
+.sub{font-size:26px;color:var(--y);margin:2px}.q2{font-size:28px;color:var(--y)}.h2{font-size:16px;margin:10px}
+.b{font:11px/1.5 'Press Start 2P',monospace;background:#151613;color:var(--ink);border:2px solid var(--ln);padding:11px 15px;margin:6px;cursor:pointer;box-shadow:3px 3px 0 #000}
+.b:hover:not(:disabled){border-color:var(--y);color:var(--y)}.b:disabled{opacity:.35;cursor:default}.b.s{font-size:9px;padding:7px 9px;margin:2px}
+.b.q{display:block;width:100%;text-align:left;font:21px VT323,monospace;padding:8px 12px;margin:6px 0}
+#hud{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;right:10px;display:none;justify-content:space-between;align-items:center;z-index:4;font-size:10px;color:var(--dim)}
+body.g #hud{display:flex}
+#pr{position:fixed;bottom:100px;left:0;right:0;text-align:center;font-size:10px;color:var(--y);z-index:4;pointer-events:none}
+#toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:30;background:#12120f;border:2px solid var(--y);color:var(--y);padding:8px 12px;font-size:9px;display:none;text-align:center}
+#db{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:min(780px,94vw);background:#0d0e0c;border:2px solid var(--ln);padding:12px 16px;z-index:8;display:none;min-height:70px;cursor:pointer}
+#db.on{display:block;animation:fi .3s}#dsp{font-size:9px;color:var(--y)}#dt{margin-top:6px;font-size:24px}
+#intro{background:#050505;z-index:9}#itx{font-size:clamp(24px,4vw,36px);max-width:680px;min-height:120px;cursor:pointer}
+.pan{display:flex;gap:18px;max-width:860px;width:100%;background:#0f100d;border:2px solid var(--ln);padding:16px;text-align:left;flex-wrap:wrap;justify-content:center}
+#pc{width:128px;height:208px;image-rendering:pixelated;border:2px solid var(--ln)}.pm{flex:1;min-width:260px}
+#log{max-height:34vh;overflow:auto;margin:8px 0;padding-right:6px}.m{margin:7px 0;font-size:23px}.m b{font:9px 'Press Start 2P',monospace;color:var(--y);margin-right:8px}.m.A{border-left:3px solid var(--ln);padding-left:8px}
+#brd{position:relative;width:min(960px,96vw);height:520px;background:#12130f;border:2px solid var(--ln);flex:none}
+.col{position:absolute;top:0;bottom:0;width:33.33%;border-right:2px dashed #2a2a25;box-sizing:border-box;padding:8px;font:11px 'Press Start 2P',monospace}.col:nth-child(2){left:33.33%}.col:nth-child(3){left:66.66%;border:0}
+.cd{position:absolute;width:30%;min-height:52px;box-sizing:border-box;background:#1b1b17;border:1px solid var(--ln);border-left:5px solid;padding:4px 7px;cursor:grab;touch-action:none;box-shadow:2px 2px 0 #000;text-align:left;user-select:none}
+.cd i{display:block;font-style:normal;font-size:20px;line-height:1}.cd small{font-size:15px;color:var(--dim)}.cd.sel{outline:2px solid var(--y)}
+#insp{width:min(960px,96vw);min-height:60px;margin:8px 0;font-size:23px}
+#fnb{max-width:680px}#fnb p{margin:12px 0;font-size:25px;animation:fi .8s both}
+textarea{width:min(640px,92vw);height:130px;background:#0d0e0c;color:var(--ink);border:2px solid var(--ln);font:22px VT323,monospace;padding:8px}
+</style></head><body>
+<div id="app"><canvas id="cv"></canvas></div><div id="fl"></div>
+<div id="hud"><span id="ar" class="px"></span><span><button class="b s" id="bm">MENU</button><button class="b s" id="bb">BOARD</button><button class="b s" id="bf" disabled>FINAL CASE</button></span></div>
+<div id="pr" class="px"></div><div id="toast"></div>
+<div id="db"><b id="dsp" class="px">DETECTIVE</b><div id="dt"></div></div>
+<div class="ov on" id="title"><canvas id="tc" width="64" height="28" style="image-rendering:pixelated;width:min(384px,80vw)"></canvas>
+<h1>THE POWERLESS</h1><p class="sub">An Investigation of Power on a California Ranch</p><p class="dim" style="max-width:560px">"Everyone has something to lose. Not everyone has the power to protect it."</p>
+<div><button class="b" id="tb">BEGIN INVESTIGATION</button><button class="b" id="tcn" style="display:none">CONTINUE</button><button class="b" id="th">HOW TO PLAY</button></div></div>
+<div class="ov" id="intro"><div id="itx"></div><p class="px dim" style="font-size:9px">[ SPACE / CLICK ]</p></div>
+<div class="ov" id="how"><h1 style="font-size:20px">HOW TO PLAY</h1><div style="max-width:640px;font-size:24px;text-align:left"><p>Walk the ranch with WASD or the arrow keys. Press E, SPACE or ENTER (or click) when a glowing marker is nearby to examine evidence or talk.</p><p>Each ranch hand will answer only THREE questions. Choose carefully.</p><p>Every answer becomes a card on the evidence board in your office. Drag cards, click to inspect. Talk to all three men to unlock the FINAL CASE.</p><p>There is no answer key. Build an interpretation from the evidence. Progress saves automatically.</p></div><button class="b" id="hb">BACK</button></div>
+<div class="ov" id="mn"><h1 style="font-size:20px">PAUSED</h1><button class="b" id="m1">RESUME</button><button class="b" id="m2">EVIDENCE BOARD</button><button class="b" id="m3">HOW TO PLAY</button><button class="b" id="m4">RESTART</button></div>
+<div class="ov" id="iv"><div class="pan"><canvas id="pc" width="16" height="26"></canvas><div class="pm"><div class="px" id="ivn" style="font-size:12px"></div><div id="left" class="dim"></div><div id="log"></div><div id="chs"></div></div></div></div>
+<div class="ov" id="bd"><div class="px" style="font-size:13px;margin:6px">EVIDENCE BOARD — DETECTIVE'S OFFICE</div><div id="brd"><div class="col">CROOKS</div><div class="col">CANDY</div><div class="col">LENNIE</div></div><div id="insp" class="dim"></div><div><button class="b" id="bc">CLOSE</button><button class="b" id="bf2" disabled>FINAL CASE</button></div></div>
+<div class="ov" id="fn"><div id="fnb"></div></div>
+<script>
+const $=q=>document.querySelector(q),W=320,H=192,SK='powerless_v1';
+const cv=$('#cv'),c=cv.getContext('2d');cv.width=W;cv.height=H;
+const R=(g,x,y,w,h,k)=>{g.fillStyle=k;g.fillRect(x|0,y|0,w|0,h|0)};
+/* ---------- state ---------- */
+const fresh=()=>({started:0,unl:0,asked:{older:[],black:[],young:[]},cards:[],pos:{},choice:null,resp:''});
+let s=(()=>{try{return Object.assign(fresh(),JSON.parse(localStorage.getItem(SK)))}catch(e){return fresh()}})();
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}};
+/* ---------- content ---------- */
+const CAT={S:['SOCIAL POWER','#7b6d8a'],E:['ECONOMIC POWER','#b7aa6a'],P:['PHYSICAL POWER','#a3a39b'],A:['PERSONAL AGENCY','#7f9172'],C:['SOCIAL CONNECTION','#8c7a70']};
+const COLS=['crooks','candy','lennie'];
+const N={
+older:{nm:'OLDER RANCH HAND',sh:'OLDER HAND',who:'candy',st:[
+[{q:`What happens when a worker can no longer do his job?`,a:[`Depends on the worker. If he's useful, somebody finds a way to keep him around. If he isn't, there's always another man waiting outside the gate. Ranches need hands, not problems.`],c:[`Fear of becoming useless`,'E',`A place on the ranch lasts only while a man is useful.`]},
+{q:`Why do older workers worry so much about keeping their jobs?`,a:`Because a young man can leave one ranch and find another. An old man doesn't have that luxury. Once your body gives out, your wages usually go with it.`.split('|'),c:[`Depends on employment`,'E',`When the body fails, wages and options fail with it.`]}],
+[{q:`What do you think happens to a man like Candy when he gets too old?`,a:[`Candy's been here a long time. But that doesn't mean the ranch owes him anything. The bosses look at what a man can do tomorrow, not what he did ten years ago.`],c:[`Older worker`,'E',`Years of service do not guarantee security.`]},
+{q:`Does Candy still have a place here?`,a:[`For now. That's the trouble with 'for now.' A man can wake up one morning and find out he's become more trouble than he's worth.`],c:[`A place "for now"`,'A',`His future depends on how others judge his worth.`]}],
+[{q:`What gives a ranch hand power?`,a:[`Money helps. Strength helps. Being useful helps most of all. If somebody needs you, you've got something to bargain with.`],c:[`Usefulness as leverage`,'E',`Being needed is a worker's bargaining power.`]},
+{q:`Who has the hardest time bargaining?`,a:[`The man who needs the ranch more than the ranch needs him.`],c:[`Needs ranch more than it needs him`,'E',`Fewer exits mean less power to bargain.`]}]]},
+black:{nm:'BLACK RANCH HAND',sh:'RANCH HAND',who:'crooks',st:[
+[{q:`Why does Crooks sleep apart from the other ranch hands?`,a:[`You know why. Folks say it's easier that way. Easier for them, anyway.`,`D:And for Crooks?`,`Nobody asks him.`],c:[`Separate living quarters`,'S',`Segregation is called convenience; it was never his choice.`]},
+{q:`Is Crooks capable of doing the same work as the other men?`,a:[`He's a smart man. Reads more than most of them, too. But being smart doesn't make a white man forget the color of your skin.`],c:[`Educated and intelligent`,'S',`Ability cannot outweigh racial prejudice.`]}],
+[{q:`Does Crooks want company?`,a:[`He'll tell you he doesn't need anybody. That's not the same as saying he doesn't want anybody.`],c:[`Desires companionship`,'C',`Claiming not to need people can hide wanting them.`]},
+{q:`Why doesn't he just leave the ranch?`,a:[`And go where? A man can walk away from one ranch. He can't walk away from the world outside it.`],c:[`No real way out`,'A',`Leaving a ranch does not leave racism behind.`]}],
+[{q:`Does Crooks ever have power over the other men?`,a:[`For a little while, maybe. Give a lonely man one person beneath him, and he might forget for a moment who's standing above him.`],c:[`Power over someone lower`,'S',`Isolation can tempt a man to dominate the more vulnerable.`]},
+{q:`Who can take that power away?`,a:[`Almost anybody with the right skin, the right name, or the right position.`],c:[`Limited social power`,'S',`His authority is borrowed and easily removed.`]}]]},
+young:{nm:'YOUNG RANCH HAND',sh:'YOUNG HAND',who:'lennie',st:[
+[{q:`How strong is Lennie?`,a:[`Strong as an ox. I've seen him move things two men couldn't budge.`,`Funny thing is, strength doesn't seem to help him much.`],c:[`Extreme physical strength`,'P',`His strength is real, yet it brings him little security.`]},
+{q:`Why does George always look after Lennie?`,a:[`Because Lennie can't always figure things out on his own. George knows where to go, what to say, when to leave. Lennie mostly follows.`],c:[`Depends on George`,'A',`Others make his choices; he follows.`]}],
+[{q:`Do the men fear Lennie?`,a:[`Some do. Mostly because they know he's strong. They don't always understand him.`],c:[`Feared, not understood`,'C',`People react to his strength before they know him.`]},
+{q:`Does Lennie understand how strong he is?`,a:[`Not really. That's the strange part. He can hurt somebody without meaning to, but he doesn't understand what his strength means until it's too late.`],c:[`Can't grasp consequences`,'A',`Strength without understanding is not control.`]}],
+[{q:`Does Lennie choose to stay apart from people?`,a:[`Sometimes he does. He likes rabbits. He likes George. He doesn't always know how to deal with everybody else.`],c:[`Apart, but not by choice`,'C',`Difficulty connecting can look like choosing solitude.`]},
+{q:`Does Lennie actually want to be alone?`,a:[`No. Not really. He wants people around him. He just doesn't always know how to be around them.`],c:[`Wants companionship`,'C',`He longs for people but lacks the means to keep them.`]}]]}};
+const ENV={ec:{who:'crooks',l:[`Separate living quarters.`,`EVIDENCE: SOCIAL SEPARATION`],c:[`Racial segregation`,'S',`Exclusion is built into where he sleeps.`]},
+ed:{who:'candy',l:[`An old ranch worker's belongings. His missing hand makes some tasks difficult.`,`EVIDENCE: ECONOMIC VULNERABILITY`],c:[`Missing hand`,'E',`Disability makes usefulness easier to question.`]},
+el:{who:'lennie',l:[`Large work equipment. The tools are built for strength, but strength alone does not explain who controls the work.`,`EVIDENCE: PHYSICAL POWER / LIMITED AGENCY`],c:[`Power is not independence`,'P',`Strength built for work does not decide who controls it.`]}};
+const AN={crooks:`Your conclusion: Crooks experiences the greatest social exclusion. His intelligence and ability cannot protect him from racial discrimination. His greatest restriction comes from a society that denies him equal belonging.`,
+candy:`Your conclusion: Candy faces the greatest threat to economic independence. His age and disability make his future dependent on whether others consider him useful.`,
+lennie:`Your conclusion: Lennie possesses enormous physical strength but remarkably little control over his own life. His situation complicates the meaning of power itself: physical strength does not guarantee independence, safety, or agency.`};
+/* ---------- sprites ---------- */
+const LOOK={
+det:{pn:'#1c1c1f',co:'#2d2d31',hl:'#a09d8e',tie:'#cfcab8',sk:'#aaa799',hr:'#141414',ht:'f',hc:'#232326',hb:'#d4d0be'},
+older:{pn:'#2b2a25',co:'#3d392f',sk:'#8c897d',hr:'#8a8982',ht:'s',hc:'#2a2926',bd:3,bc:'#a0a098',st:1},
+black:{pn:'#26282a',co:'#363a35',sk:'#4f4d48',hr:'#151515',ht:'c',hc:'#1f2020',bd:2,bc:'#181817'},
+young:{pn:'#2c3036',co:'#55554e',ov:'#2c3036',sk:'#8f8c80',hr:'#3a362f',bd:1,bc:'#6e6b62'}};
+function man(g,x,y,o,f){x|=0;y|=0;const s=o.st?1:0,b=f?1:0;
+R(g,x+1,y+17,10,2,'rgba(0,0,0,.5)');if(o.hl)R(g,x-1,y+18,14,1,'rgba(220,215,190,.18)');
+R(g,x+3,y+13,2,5-b,o.pn);R(g,x+7,y+13,2,4+b,o.pn);
+R(g,x+2,y+6+s,8,8-s,o.co);R(g,x+1,y+7+s,1,5,o.co);R(g,x+10,y+7+s,1,5,o.co);
+if(o.ov){R(g,x+3,y+7+s,1,7,o.ov);R(g,x+8,y+7+s,1,7,o.ov);R(g,x+3,y+12,6,2,o.ov)}
+if(o.hl){R(g,x+2,y+6+s,8,1,o.hl);R(g,x+2,y+6+s,1,7,o.hl);R(g,x+1,y+7+s,1,4,o.hl)}
+if(o.tie)R(g,x+5,y+7+s,2,5,o.tie);
+R(g,x+3,y+1+s,6,5,o.sk);R(g,x+3,y+1+s,6,2,o.hr);R(g,x+4,y+3+s,1,1,'#0a0a0a');R(g,x+7,y+3+s,1,1,'#0a0a0a');
+const d=o.bd;if(d==1)R(g,x+3,y+4+s,6,2,o.bc);if(d==2){R(g,x+3,y+4+s,6,3,o.bc);R(g,x+4,y+7+s,4,1,o.bc)}if(d==3){R(g,x+3,y+4+s,6,3,o.bc);R(g,x+4,y+7+s,4,5,o.bc)}
+if(o.ht=='f'){R(g,x,y+1+s,12,1,o.hc);R(g,x,y+1+s,3,1,o.hl);R(g,x+3,y-2+s,6,3,o.hc);R(g,x+3,y+s,6,1,o.hb);R(g,x+3,y-2+s,6,1,o.hl)}
+else if(o.ht=='s'){R(g,x+1,y+1+s,10,1,o.hc);R(g,x+3,y-1+s,6,2,o.hc)}
+else if(o.ht=='c'){R(g,x+3,y+s,7,2,o.hc);R(g,x+8,y+2+s,3,1,o.hc)}}
+/* ---------- map ---------- */
+const bg=document.createElement('canvas');bg.width=W;bg.height=H;
+let sd=7;const rnd=()=>(sd=sd*16807%2147483647)/2147483647;
+function bld(g,x,y,w,h,wall,roof,win,lb){R(g,x,y,w,h,wall);for(let i=x+3;i<x+w;i+=4)R(g,i,y,1,h,'rgba(0,0,0,.25)');
+R(g,x-2,y-4,w+4,14,roof);R(g,x-2,y+10,w+4,1,'#000');R(g,x,y+h,w,3,'rgba(0,0,0,.4)');R(g,x+w/2-4,y+h-11,8,11,'#080808');
+for(let i=x+6;i<x+w-10;i+=w>40?24:99){R(g,i-1,y+17,10,8,'#111');R(g,i,y+18,8,6,win)}
+g.fillStyle='#8d8b80';g.font='bold 6px monospace';g.textAlign='center';g.fillText(lb,x+w/2,y+6)}
+(function(){const g=bg.getContext('2d');R(g,0,0,W,H,'#1b1d18');
+for(let i=0;i<1000;i++)R(g,rnd()*W,rnd()*H,1,1,rnd()<.5?'#23261f':'#161813');
+R(g,100,68,220,60,'#25251e');R(g,288,68,32,124,'#25251e');
+R(g,112,152,176,40,'#1a221c');for(let x=116;x<288;x+=8)R(g,x,154,2,36,'#222c24');
+R(g,112,144,176,2,'#5a5648');R(g,112,148,176,1,'#3c382f');for(let x=112;x<=288;x+=16)R(g,x,141,2,9,'#4a4538');
+bld(g,16,16,80,48,'#34332f','#17171a','#5e5a3c','BUNKHOUSE');bld(g,128,16,80,48,'#363631','#161619','#5e5a3c','BARN');
+bld(g,224,16,48,48,'#2f322d','#17181a','#4c5844','STABLE');bld(g,272,16,32,48,'#2b2a2e','#151518','#4c5844',`CROOKS' ROOM`);
+bld(g,16,128,64,48,'#302c34','#161519','#55495f','DETECTIVE OFFICE');
+R(g,50,66,12,8,'#3d382e');R(g,50,69,12,1,'#1a1a18');R(g,150,64,14,10,'#4a4538');R(g,150,68,14,1,'#2a271f');R(g,157,64,1,10,'#2a271f');
+R(g,166,67,8,7,'#44402f');R(g,284,66,10,8,'#3a3a3a');R(g,285,67,2,5,'#6a6458');R(g,288,67,2,5,'#5d6656');R(g,291,67,2,5,'#625a6a');
+R(g,228,68,16,6,'#3a3a36');R(g,296,150,2,22,'#4a4538');R(g,312,150,2,22,'#4a4538');R(g,298,150,14,5,'#3a362d');
+const r=g.createRadialGradient(205,100,2,205,100,60);r.addColorStop(0,'rgba(190,175,100,.16)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(100,50,210,100)})();
+const SOL=[[16,16,80,48],[128,16,80,48],[224,16,48,48],[272,16,32,48],[16,128,64,48],[112,142,176,6]];
+const IT=[{id:'ed',t:'e',x:56,y:80},{id:'el',t:'e',x:158,y:80},{id:'ec',t:'e',x:288,y:80},{id:'of',t:'o',x:48,y:186},
+{id:'older',t:'n',x:106,y:88},{id:'young',t:'n',x:178,y:108},{id:'black',t:'n',x:254,y:88}];
+const P={x:304,y:172,f:0},K={};
+const hit=(x,y)=>x<8||x>312||y<10||y>189||SOL.some(r=>x+4>r[0]&&x-4<r[0]+r[2]&&y>r[1]&&y-3<r[1]+r[3])||IT.some(i=>i.t=='n'&&Math.abs(x-i.x)<9&&Math.abs(y-i.y)<4);
+const zone=(x,y)=>y>148&&x<288?'FENCE / FIELD':x>288&&y>100?'RANCH ENTRANCE':x<110&&y>100?'DETECTIVE OFFICE':y<80&&x<110?'BUNKHOUSE':y<80&&x<216?'BARN':y<80&&x<272?'STABLE':y<80?`CROOKS' ROOM`:'WORK YARD';
+const busy=()=>!!document.querySelector('.ov.on,#db.on');
+let near=null,lz='',last=0;
+function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
+if(!busy()&&s.started){let dx=(K.d||K.arrowright?1:0)-(K.a||K.arrowleft?1:0),dy=(K.s||K.arrowdown?1:0)-(K.w||K.arrowup?1:0);
+if(dx&&dy){dx*=.707;dy*=.707}P.m=!!(dx||dy);const v=72*dt;if(dx&&!hit(P.x+dx*v,P.y))P.x+=dx*v;if(dy&&!hit(P.x,P.y+dy*v))P.y+=dy*v}else P.m=false;
+near=null;let bd=22;IT.forEach(i=>{const d=Math.hypot(P.x-i.x,P.y-i.y);if(d<bd){bd=d;near=i}});
+$('#pr').textContent=!busy()&&near?'[E] '+(near.t=='n'?'TALK':near.t=='o'?'ENTER OFFICE':'EXAMINE'):'';
+const z=zone(P.x,P.y);if(z!=lz){lz=z;$('#ar').textContent=z}
+c.drawImage(bg,0,0);const pul=.5+.5*Math.sin(t/300);
+IT.forEach(i=>{if(i.t=='o'||i.t=='e'&&!s.cards.some(k=>k.id==i.id)||i.t=='n'&&s.asked[i.id].length<3){c.fillStyle=`rgba(205,195,125,${.35+.6*pul})`;c.fillRect(i.x-1,i.y-(i.t=='n'?30:13)|0,3,3)}});
+const fr=P.m?(t/140|0)%2:0;
+[{y:P.y,d:()=>man(c,P.x-6,P.y-18,LOOK.det,fr)},...IT.filter(i=>i.t=='n').map(i=>({y:i.y,d:()=>man(c,i.x-6,i.y-18,LOOK[i.id],0)}))].sort((a,b)=>a.y-b.y).forEach(e=>e.d());
+requestAnimationFrame(loop)}
+/* ---------- text & dialogue ---------- */
+let tw=null,dlg=null;
+const stopTw=()=>{if(tw){clearInterval(tw.h);tw=null}};
+function type(e,t,cb){stopTw();e.textContent='';let i=0;tw={e,t,cb};tw.h=setInterval(()=>{e.textContent=t.slice(0,++i);if(i>=t.length)fin()},16)}
+function fin(){if(!tw)return;const q=tw;stopTw();q.e.textContent=q.t;q.cb&&q.cb()}
+function say(box,e,lines,cb,sp){dlg={box,e,lines,i:0,cb};box.classList.add('on');if(sp)$('#dsp').textContent=sp;type(e,lines[0])}
+function adv(){if(tw){fin();return}if(!dlg)return;if(++dlg.i>=dlg.lines.length){const d=dlg;dlg=null;d.box.classList.remove('on');d.cb&&d.cb()}else type(dlg.e,dlg.lines[dlg.i])}
+const open=id=>{document.querySelectorAll('.ov.on').forEach(o=>o.classList.remove('on'));$(id).classList.add('on')};
+const closeAll=()=>{stopTw();dlg=null;ivTok++;document.querySelectorAll('.ov.on,#db.on').forEach(o=>o.classList.remove('on'))};
+function btn(t,f,k='b'){const b=document.createElement('button');b.className=k;b.textContent=t;b.onclick=f;return b}
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2600)}
+function ui(){const u=['older','black','young'].every(k=>s.asked[k].length>=3);$('#bf').disabled=$('#bf2').disabled=!u;
+if(u&&!s.unl){s.unl=1;save();toast('FINAL CASE UNLOCKED')}$('#tcn').style.display=s.started?'':'none'}
+function addCard(who,id,c){if(s.cards.some(k=>k.id==id))return false;s.cards.push({id,who,t:c[0],c:c[1],e:c[2]});save();toast('+ EVIDENCE: '+c[0]);return true}
+/* ---------- flow ---------- */
+function portrait(g,o){R(g,0,0,16,26,'#151613');const r=g.createRadialGradient(8,12,1,8,12,12);r.addColorStop(0,'rgba(180,170,120,.25)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,16,26);man(g,2,5,o,0)}
+(function(){const g=$('#tc').getContext('2d');R(g,0,0,64,28,'rgba(0,0,0,0)');['det','older','black','young'].forEach((k,i)=>man(g,i*16+2,6,LOOK[k],0))})();
+function startPlay(){document.body.classList.add('g');closeAll();ui()}
+$('#tb').onclick=()=>{s=fresh();s.started=1;save();Object.assign(P,{x:304,y:172});open('#intro');
+say($('#intro'),$('#itx'),[`California. 1930s.`,`The ranch hands work, sleep, eat, and move on.`,`But beneath the routine lies another system — one built from race, age, ability, money, and fear.`,`Three men live near the bottom of that system.`,`Your job is not to decide who is strongest.`,`Your job is to find out who has the least power.`],startPlay)};
+$('#intro').onclick=adv;$('#db').onclick=adv;
+$('#tcn').onclick=startPlay;$('#th').onclick=()=>open('#how');
+$('#hb').onclick=()=>s.started&&document.body.classList.contains('g')?open('#mn'):open('#title');
+$('#bm').onclick=()=>open('#mn');$('#bb').onclick=$('#m2').onclick=()=>{open('#bd');rb()};$('#bc').onclick=$('#m1').onclick=closeAll;
+$('#m3').onclick=()=>open('#how');$('#bf').onclick=$('#bf2').onclick=()=>{open('#fn');f1()};
+$('#m4').onclick=e=>{if(!e.target.dataset.c){e.target.dataset.c=1;e.target.textContent='CONFIRM RESTART?';return}
+try{localStorage.removeItem(SK)}catch(x){}s=fresh();closeAll();document.body.classList.remove('g');e.target.textContent='RESTART';delete e.target.dataset.c;ui();open('#title')};
+function interact(){if(!near||busy())return;const i=near;
+if(i.t=='e'){const v=ENV[i.id],n=addCard(v.who,i.id,v.c);say($('#db'),$('#dt'),n?[v.l[0],v.l[1]+' (added to the board)']:v.l,ui,'DETECTIVE')}
+else if(i.t=='o'){open('#bd');rb()}else talk(i.id)}
+/* ---------- interviews ---------- */
+let cur,ivTok=0;
+function msg(k,t){const d=document.createElement('div');d.className='m '+k;const b=document.createElement('b'),p=document.createElement('span');b.textContent=k=='D'?'DETECTIVE':N[cur].sh;p.textContent=t;d.append(b,p);$('#log').append(d);$('#log').scrollTop=1e5;return p}
+function talk(id){cur=id;open('#iv');ivTok++;$('#ivn').textContent=N[id].nm;portrait($('#pc').getContext('2d'),LOOK[id]);
+$('#log').innerHTML='';s.asked[id].forEach((p,i)=>{const q=N[id].st[i][p];msg('D',q.q);q.a.forEach(l=>l.startsWith('D:')?msg('D',l.slice(2)):msg('A',l))});rc()}
+function rc(){const n=N[cur],a=s.asked[cur],h=$('#chs');h.innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(3-a.length);
+if(a.length<3)n.st[a.length].forEach((q,i)=>h.append(btn(q.q,()=>ask(i),'b q')));else{const p=document.createElement('p');p.className='dim';p.textContent='He has nothing more to say.';h.append(p)}
+h.append(btn('LEAVE',closeAll,'b s'));ui()}
+function ask(i){const n=N[cur],st=s.asked[cur].length,q=n.st[st][i],tok=++ivTok;s.asked[cur].push(i);addCard(n.who,cur+st,q.c);save();
+$('#chs').innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(3-s.asked[cur].length);msg('D',q.q);let k=0;
+(function nx(){if(tok!=ivTok)return;if(k>=q.a.length){rc();return}const r=q.a[k++],d=r.startsWith('D:');type(msg(d?'D':'A',''),d?r.slice(2):r,()=>setTimeout(nx,350))})()}
+/* ---------- board ---------- */
+function rb(){const B=$('#brd'),row={};B.querySelectorAll('.cd').forEach(x=>x.remove());$('#insp').textContent='Click a card to inspect it. Drag cards to arrange your theory.';
+s.cards.forEach(k=>{row[k.who]=(row[k.who]??-1)+1;const p=s.pos[k.id]||[COLS.indexOf(k.who)*33.33+1.5,40+row[k.who]*64],d=document.createElement('div');
+d.className='cd';d.style.cssText=`left:${p[0]}%;top:${p[1]}px;border-left-color:${CAT[k.c][1]}`;d.innerHTML='<i></i><small></small>';d.firstChild.textContent=k.t;d.lastChild.textContent=CAT[k.c][0];
+d.onpointerdown=e=>{e.preventDefault();const b=B.getBoundingClientRect(),r=d.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top,x0=e.clientX,y0=e.clientY;let mv=0;d.setPointerCapture(e.pointerId);d.style.zIndex=9;
+d.onpointermove=v=>{if(Math.abs(v.clientX-x0)+Math.abs(v.clientY-y0)>4)mv=1;if(!mv)return;const l=Math.max(0,Math.min(100-d.offsetWidth/b.width*100,(v.clientX-ox-b.left)/b.width*100)),t=Math.max(34,Math.min(b.height-d.offsetHeight,v.clientY-oy-b.top));d.style.left=l+'%';d.style.top=t+'px';s.pos[k.id]=[l,t]};
+d.onpointerup=()=>{d.onpointermove=d.onpointerup=null;d.style.zIndex='';if(mv)save();else{B.querySelectorAll('.cd').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');
+const i=$('#insp');i.innerHTML='<b></b> <span class="px" style="font-size:9px"></span><br><span></span>';i.children[0].textContent=k.t;i.children[1].textContent='['+CAT[k.c][0]+']';i.children[3].textContent=k.e}}};B.append(d)})}
+/* ---------- final case ---------- */
+const fb=()=>{const b=$('#fnb');b.innerHTML='';return b};
+function P_(b,t,k,dl){const p=document.createElement('p');p.textContent=t;if(k)p.className=k;if(dl)p.style.animationDelay=dl+'s';b.append(p);return p}
+function f1(){const b=fb();P_(b,'FINAL CASE','px h2');P_(b,'Three men. Three different kinds of weakness. Three different kinds of power.');P_(b,'Who has the least power?','q2');
+['CROOKS','CANDY','LENNIE'].forEach(k=>b.append(btn(k,()=>f2(k.toLowerCase()))))}
+function f2(k){s.choice=k;save();const b=fb();P_(b,'YOUR ANALYSIS','px h2');P_(b,AN[k]);b.append(btn('RECONSIDER',f1),btn('CONTINUE',f3))}
+function f3(){const b=fb();P_(b,`STEINBECK'S QUESTION`,'px h2');
+[`If power means the ability to control your own life, who on the ranch truly possesses it?`,`Crooks can think but cannot escape racism.`,`Candy can work but cannot escape aging.`,`Lennie can overpower others but cannot control his own strength.`,`Perhaps the tragedy is not that these men are weak.`,`It is that the world decides which kinds of strength count.`].forEach((t,i)=>P_(b,t,i==5?'q2':'',i*1.3));
+const x=btn('CONTINUE',f4);x.style.cssText='animation:fi 1s 8s both';b.append(x)}
+function f4(){const b=fb();P_(b,'FINAL REFLECTION','px h2');P_(b,'Based on your evidence, complete the investigation.');P_(b,'To what degree are Crooks, Candy, and Lennie marginalized, and what does Steinbeck reveal through their experiences?','q2');
+const t=document.createElement('textarea');t.value=s.resp;t.placeholder='Write your response here...';
+[`Steinbeck shows that marginalization...`,`Although each character possesses...`,`Ultimately, the characters' different forms of power...`].forEach(x=>b.append(btn(x,()=>{t.value+=(t.value&&!/\s$/.test(t.value)?' ':'')+x+' ';t.focus()},'b s')));
+b.append(document.createElement('br'),t,document.createElement('br'));const m=P_(b,'');
+b.append(btn('COMPLETE INVESTIGATION',()=>{if(t.value.trim().length<15){m.textContent='Write at least a sentence, using your evidence.';return}s.resp=t.value;save();f5()}))}
+function f5(){const b=fb();P_(b,'CASE FILED','px h2');const q=P_(b,s.resp,'q2');q.style.whiteSpace='pre-wrap';
+P_(b,'The evidence is on the board. The interpretation is yours.','dim');
+b.append(btn('REVIEW BOARD',()=>{open('#bd');rb()}),btn('RETURN TO RANCH',closeAll),btn('EDIT RESPONSE',f4))}
+/* ---------- input ---------- */
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();
+if(k==' '||k=='enter'){if(tw||dlg){e.preventDefault();adv();return}if(s.started&&!busy()){e.preventDefault();interact()}return}
+if(k=='e'&&!busy()&&s.started&&!/TEXTAREA/.test(e.target.tagName)){interact();return}
+if(k=='escape'){const o=document.querySelector('.ov.on');if(dlg)return;if(!o&&s.started)open('#mn');else if(o&&!['title','intro'].includes(o.id))closeAll()}
+if(!/TEXTAREA/.test(e.target.tagName)){K[k]=1;if(k.startsWith('arrow'))e.preventDefault()}});
+addEventListener('keyup',e=>K[e.key.toLowerCase()]=0);addEventListener('blur',()=>{for(const k in K)K[k]=0});
+cv.onclick=()=>interact();
+document.addEventListener('click',e=>{const b=e.target.closest('button');b&&b.blur()});
+if(s.started)document.body.classList.remove('g');ui();requestAnimationFrame(loop);
+</script></body></html>
