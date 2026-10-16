@@ -72,7 +72,7 @@ body.g #hud{display:flex}
 <div class="ov" id="bd"><div class="bh"><h1>CASE BOARD</h1><div class="sub">“Who has the least power?”</div><button class="b" id="bc2">CLOSE</button><button class="b" id="bf2" disabled>FINAL CASE</button></div><div id="bc"><svg id="th2"></svg><div class="cols" id="cols"></div><div id="xn"></div></div></div>
 <div class="ov" id="md" style="z-index:30"><div class="paper" id="mdc"></div></div>
 <div class="ov" id="fn"><div id="fnb"></div></div>
-<div class="ov" id="es"><div class="doc"><h1>FINAL CASE REPORT</h1><p style="margin:0 0 6px"><i>“Write your conclusion.”</i></p><p style="margin:0 0 14px;font-size:17px">Judgment on file: least power — <b id="jd"></b></p><p style="font-size:24px"><b>To what degree are the characters in <u>Of Mice and Men</u> marginalized, and what does Steinbeck reveal through their experiences?</b></p><h3 class="px" style="font-size:13px;margin:22px 0 10px">YOUR ESSAY (Placeholder)</h3><textarea id="esy"></textarea><p style="font-size:17px">Use the evidence you collected to support your conclusion.</p><button class="b" id="eb1">BACK TO BOARD</button><button class="b" id="eb2">RETURN TO RANCH</button><button class="b" id="eb3">CHANGE JUDGMENT</button></div></div>
+<div class="ov" id="es"><div class="doc"><h1>FINAL CASE REPORT</h1><p style="margin:0 0 6px"><i>“Write your conclusion.”</i></p><p style="margin:0 0 14px;font-size:17px">Judgment on file: least power — <b id="jd"></b></p><p style="font-size:24px"><b>To what degree are the characters in <u>Of Mice and Men</u> marginalized, and what does Steinbeck reveal through their experiences?</b></p><h3 class="px" id="cft" style="font-size:13px;margin:22px 0 10px"></h3><div id="cf" style="white-space:pre-wrap"></div><button class="b" id="eb1">BACK TO BOARD</button><button class="b" id="eb2">RETURN TO RANCH</button><button class="b" id="eb3">CHANGE JUDGMENT</button></div></div>
 <script>
 const $=q=>document.querySelector(q),W=320,H=192,SK='powerless_v2';
 const cv=$('#cv'),c=cv.getContext('2d');cv.width=W;cv.height=H;
@@ -406,8 +406,14 @@ $('#mdc').innerHTML=h;$('#mdc').append(btn('CLOSE',()=>$('#md').classList.remove
 function f1(){if(s.ev.length<12)return;rb();$('#bd').classList.add('on');const b=$('#fnb');b.innerHTML='';
 b.innerHTML=`<h1 style="font-size:22px">FINAL CASE</h1><p class="big">POWER ISN'T THE SAME AS FREEDOM.</p><div class="g4">${Object.keys(CH).map(k=>`<div><b>${CH[k]}</b><br>“${QT[k]}”</div>`).join('')}</div><p class="q2">WHO HAS THE LEAST POWER?</p>`;
 Object.keys(CH).forEach(k=>b.append(btn(CH[k],()=>{s.fin=k;save();openEssay()})));b.append(document.createElement('br'),btn('BACK TO BOARD',()=>$('#fn').classList.remove('on'),'b s'));$('#fn').classList.add('on')}
-function openEssay(){open('#es');$('#jd').textContent=CH[s.fin];$('#esy').value=s.essay}
-$('#esy').oninput=e=>{s.essay=e.target.value;save()};
+/* Paste each finished case file between the backticks. Empty = placeholder shows. */
+const CASEFILES={
+crooks:``,
+candy:``,
+lennie:``,
+wife:``};
+function openEssay(){open('#es');const k=s.fin;$('#jd').textContent=CH[k];$('#cft').textContent='CASE FILE: '+CH[k];
+$('#cf').textContent=CASEFILES[k]||'[PLACEHOLDER — CASE FILE: '+CH[k]+']'}
 $('#eb1').onclick=()=>{open('#bd');rb()};$('#eb2').onclick=closeAll;$('#eb3').onclick=()=>{open('#bd');f1()};
 /* ---------- input ---------- */
 addEventListener('click',e=>{audio();const b=e.target.closest('button');b&&b.blur()});
