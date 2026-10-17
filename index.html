@@ -122,7 +122,7 @@ const VO = {
   blunt: [190, .05, 'square'],
   old: [130, .07, 'triangle']
 };
-
+ 
 function audio() {
   if (!AC) {
     try {
@@ -140,25 +140,25 @@ function audio() {
   }
   if (AC.state === 'suspended') AC.resume();
 }
-
+ 
 function tone(f, t, d, v, w, detune = 0) {
   if (!AC) return;
   const o = AC.createOscillator(), g = AC.createGain();
   o.type = w;
   o.frequency.value = f;
   if (detune) o.detune.value = detune;
-
+ 
   const a = Math.min(0.08, d * 0.3); // Soft attack for music, fast for text blips
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(v, t + a);
   g.gain.exponentialRampToValueAtTime(.0001, t + d);
-
+ 
   o.connect(g);
   g.connect(mg);
   o.start(t);
   o.stop(t + d + 0.05);
 }
-
+ 
 // Low Rain Ambient Generator (Procedural White Noise + Lowpass Filter)
 function startRain() {
   if (!AC) return;
@@ -168,25 +168,25 @@ function startRain() {
   for (let i = 0; i < bufferSize; i++) {
     data[i] = Math.random() * 2 - 1; // White noise
   }
-
+ 
   const noise = AC.createBufferSource();
   noise.buffer = buffer;
   noise.loop = true;
-
+ 
   // Filter to make it sound like gentle rain, not harsh static
   const filter = AC.createBiquadFilter();
   filter.type = 'lowpass';
   filter.frequency.value = 400; // Deep, muffled rain rumble
-
+ 
   const rainGain = AC.createGain();
   rainGain.gain.value = 0.03; // Very subtle background level
-
+ 
   noise.connect(filter);
   filter.connect(rainGain);
   rainGain.connect(mg);
   noise.start();
 }
-
+ 
 // Brushed Jazz Snare / Kick sound
 function drum(type, t) {
   if (!AC || s.mute) return;
@@ -197,7 +197,7 @@ function drum(type, t) {
     tone(180, t, 0.08, 0.02, 'triangle');
   }
 }
-
+ 
 // DARK DETECTIVE NOIR THEME
 function music() {
   // Slow, walking upright bass notes (Dm - Dm7/C - BbMaj7 - A7alt)
@@ -210,25 +210,25 @@ function music() {
     [116.54, 146.83, 174.61, 220.00], // BbMaj7
     [110.00, 138.59, 164.81, 207.65]  // A7b9 (Suspenseful)
   ];
-
+ 
   let step = 0;
-
+ 
   // Very slow tempo: 1000ms per beat (~60 BPM walking pace)
   setInterval(() => {
     if (s.mute || !AC) return;
     const t = AC.currentTime;
     const bar = Math.floor(step / 4) % 4;
     const beat = step % 4;
-
+ 
     // 1. Walking Upright Bass (Plays on beats 1 and 3)
     if (beat === 0 || beat === 2) {
       tone(bassLine[bar], t, 1.2, 0.18, 'triangle');
     }
-
+ 
     // 2. Muffled Jazz Drums (Slow heartbeat pattern)
     if (beat === 0) drum('kick', t);
     if (beat === 2) drum('snare', t + 0.1);
-
+ 
     // 3. Sparse, Smoky Piano Chords (Plays off-beat with moody sustain)
     if (beat === 1 && Math.random() < 0.75) {
       const chord = pianoChords[bar];
@@ -237,45 +237,40 @@ function music() {
         tone(freq, t + (idx * 0.04), 1.6, 0.04, 'sine', -5);
       });
     }
-
+ 
     // 4. Rare Solo Lead Note (Melancholy saxophone/piano accent)
     if (beat === 3 && Math.random() < 0.4) {
       const soloNotes = [293.66, 349.23, 392.00, 415.30, 440.00, 523.25]; // D4 Blues scale with flat 5th
       const note = soloNotes[Math.floor(Math.random() * soloNotes.length)];
       tone(note, t + 0.2, 1.4, 0.05, 'sine', 8);
     }
-
+ 
     step++;
   }, 1000);
 }
-
+ 
 function blip(k) {
   const v = VO[k || 'det'];
   if (s.mute || !AC) return;
   tone(v[0] * (1 + Math.random() * .1), AC.currentTime, v[1], .05, v[2]);
 }
-
+ 
 function clk() {
   if (s.mute || !AC) return;
   tone(1200, AC.currentTime, .03, .06, 'square');
   tone(300, AC.currentTime + .05, .05, .06, 'square');
 }
-
+ 
 function muteUI() {
   document.querySelectorAll('.mu').forEach(b => b.textContent = s.mute ? 'UNMUTE' : 'MUTE');
 }
-
+ 
 function toggleMute() {
   s.mute = s.mute ? 0 : 1;
   if (mg) mg.gain.value = s.mute ? 0 : 1;
   muteUI();
   save();
 }
-function music(){const bass=[110,87.3,73.4,82.4],sc=[220,261.6,293.7,329.6,392,440,523];let n=0;setInterval(()=>{if(s.mute||!AC)return;const t=AC.currentTime;tone(bass[(n>>2)%4],t,.9,.16,'triangle');if(n%2==0&&Math.random()<.65)tone(sc[Math.random()*7|0],t+.2,1.1,.045,'sine');n++},650)}
-function blip(k){const v=VO[k||'det'];if(s.mute||!AC)return;tone(v[0]*(1+Math.random()*.1),AC.currentTime,v[1],.05,v[2])}
-function clk(){if(s.mute||!AC)return;tone(1200,AC.currentTime,.03,.06,'square');tone(300,AC.currentTime+.05,.05,.06,'square')}
-function muteUI(){document.querySelectorAll('.mu').forEach(b=>b.textContent=s.mute?'UNMUTE':'MUTE')}
-function toggleMute(){s.mute=s.mute?0:1;if(mg)mg.gain.value=s.mute?0:1;muteUI();save()}
 /* ---------- sprites ---------- */
 const LOOK={
 det:{pn:'#1c1c1f',co:'#2d2d31',hl:'#a09d8e',tie:'#cfcab8',sk:'#aaa799',hr:'#141414',ht:'f',hc:'#232326',hb:'#d4d0be'},
