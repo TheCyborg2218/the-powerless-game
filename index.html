@@ -30,6 +30,7 @@ body.g #hud{display:flex}
 .pan{display:flex;gap:20px;max-width:900px;width:100%;background:#0f100d;border:3px solid var(--ln);padding:18px;text-align:left;flex-wrap:wrap;justify-content:center}
 #pc{width:128px;height:208px;image-rendering:pixelated;border:2px solid var(--ln)}.pm{flex:1;min-width:280px}
 #log{max-height:38vh;overflow:auto;margin:10px 0;padding-right:8px}.m{margin:10px 0;font-size:27px;line-height:1.35}.m b{display:block;font:10px 'Press Start 2P',monospace;color:var(--y);margin-bottom:4px}.m.A{border-left:4px solid var(--ln);padding-left:12px}
+.pg{font:9px 'Press Start 2P',monospace;color:#3f3f39;letter-spacing:1px;margin:2px 0 10px;line-height:1.6}.card .pg,.paper .pg{color:#a8a28c;margin:0}
 /* board */
 #bd{background-color:#221e1a;background-image:radial-gradient(#3a322b 1px,transparent 1.5px),radial-gradient(#15110e 1px,transparent 1.5px);background-size:9px 9px,13px 13px;align-items:stretch;text-align:left;justify-content:flex-start}
 #bd>:first-child,#bd>:last-child{margin:0}
@@ -61,12 +62,12 @@ body.g #hud{display:flex}
 <div id="app"><canvas id="cv"></canvas></div><div id="fl"></div>
 <div id="hud"><span id="ar" class="px"></span><span><button class="b s" id="bm">MENU</button><button class="b s" id="bb">BOARD</button><button class="b s" id="bf" disabled>FINAL CASE</button><button class="b s mu" id="bmu">MUTE</button></span></div>
 <div id="pr" class="px"></div><div id="toast" class="px"></div>
-<div id="db"><b id="dsp" class="px">DETECTIVE</b><div id="dt"></div></div>
+<div id="db"><b id="dsp" class="px">DETECTIVE</b><div id="dt"></div><div id="dpg" class="pg" style="margin-top:10px"></div></div>
 <div class="ov on" id="title"><canvas id="tc" width="80" height="28" style="image-rendering:pixelated;width:min(480px,86vw)"></canvas>
 <h1>THE POWERLESS</h1><p class="sub">An Investigation of Power on a California Ranch</p><p class="dim" style="max-width:600px;font-size:27px">“Everyone has something to lose. Not everyone has the power to protect it.”</p>
 <div><button class="b" id="tb">[ BEGIN INVESTIGATION ]</button><button class="b" id="tcn" style="display:none">[ CONTINUE ]</button><button class="b" id="th">[ HOW TO PLAY ]</button></div></div>
 <div class="ov" id="intro"><div id="itx"></div><p class="px dim" style="font-size:10px">[ SPACE / CLICK ]</p></div>
-<div class="ov" id="how"><h1 style="font-size:20px">HOW TO PLAY</h1><div style="max-width:660px;font-size:27px;text-align:left"><p>Walk the ranch with WASD or the arrow keys. Press E, SPACE or ENTER (or click) when a glowing marker is nearby to examine a place or talk to a hand.</p><p>Each of the four ranch hands will answer only THREE questions. At each step you pick one of two. Choose carefully.</p><p>Everything you learn is pinned to the case board (press B, or step into your office). Click any card to inspect it. Collect 12 pieces of evidence to unlock the FINAL CASE.</p><p>There is no answer key. Build an interpretation from the evidence. Progress saves automatically.</p></div><button class="b" id="hb">BACK</button></div>
+<div class="ov" id="how"><h1 style="font-size:20px">HOW TO PLAY</h1><div style="max-width:660px;font-size:27px;text-align:left"><p>Walk the ranch with WASD or the arrow keys. Press E, SPACE or ENTER (or click) when a glowing marker is nearby to examine a place or talk to a hand.</p><p>Each of the four ranch hands will answer only THREE questions. At each step you pick one of two. Choose carefully.</p><p>Everything you learn is pinned to the case board (press B, or step into your office). Each card says who supplied it and whether they saw it, overheard it, or only heard it secondhand. Click a card to inspect it. Threads and leads appear where cards share something. What they mean is up to you. Collect 12 pieces of evidence to unlock the FINAL CASE.</p><p>There is no answer key. Build an interpretation from the evidence. Progress saves automatically.</p></div><button class="b" id="hb">BACK</button></div>
 <div class="ov" id="mn"><h1 style="font-size:20px">PAUSED</h1><button class="b" id="m1">CONTINUE</button><button class="b" id="m2">EVIDENCE BOARD</button><button class="b mu" id="m5">MUTE</button><button class="b" id="m3">HOW TO PLAY</button><button class="b" id="m4">RESTART INVESTIGATION</button></div>
 <div class="ov" id="iv"><div class="pan"><canvas id="pc" width="16" height="26"></canvas><div class="pm"><div class="px" id="ivn" style="font-size:13px"></div><div id="left" class="dim"></div><div id="log"></div><div id="chs"></div></div></div></div>
 <div class="ov" id="bd"><div class="bh"><h1>CASE BOARD</h1><div class="sub">“Who has the least power?”</div><button class="b" id="bc2">CLOSE</button><button class="b" id="bf2" disabled>FINAL CASE</button></div><div id="bc"><svg id="th2"></svg><div class="cols" id="cols"></div><div id="xn"></div></div></div>
@@ -82,36 +83,46 @@ let s=(()=>{try{return Object.assign(fresh(),JSON.parse(localStorage.getItem(SK)
 const save=()=>{try{localStorage.setItem(SK,JSON.stringify(s))}catch(e){}};
 /* ---------- content ---------- */
 const CH={crooks:'CROOKS',candy:'CANDY',lennie:'LENNIE',wife:"CURLEY'S WIFE"};
-const CAT={crooks:['SOCIAL POWER','SOCIAL CONNECTION'],candy:['ECONOMIC POWER','PERSONAL AGENCY'],lennie:['PHYSICAL POWER','PERSONAL AGENCY'],wife:['SOCIAL POWER','SOCIAL CONNECTION']};
-const CD={'SOCIAL POWER':'Can the character belong? Are they respected? Do they have a voice?','ECONOMIC POWER':'Can the character support themselves? Can they leave? Do they control their future financially?','PHYSICAL POWER':'Can the character physically overpower others?','PERSONAL AGENCY':'Can the character understand, choose, and control their own actions and future?','SOCIAL CONNECTION':'Does the character have people who support or protect them?'};
-const INF={crooks:["His separation is not simply personal. The ranch's racial hierarchy limits where he is allowed to belong.","Intelligence and usefulness cannot overcome that hierarchy. His isolation is imposed rather than simply chosen."],
-candy:["His security depends on being useful, making his future economically fragile.","Age and disability threaten his independence. The farm is an escape from dependence."],
-lennie:["Physical strength gives Lennie power over others, but it does not give him control over his own life.","Dependence leaves him vulnerable. Physical ability and personal agency can exist separately."],
-wife:["Despite some social influence through Curley, she has little freedom or genuine companionship.","Gender expectations restrict her choices. Limited power can still be used against people beneath her."]};
-const XC=[['crooks','wife','Both experience isolation, but for different reasons.'],['candy','lennie','Both depend on George in different ways.'],['candy','crooks','Both possess useful abilities but still lack equal power.'],['lennie','wife','Both have limited control over their circumstances despite possessing some form of influence or power.']];
 const QT={crooks:"Can think, but cannot escape racial exclusion.",candy:"Can work, but cannot escape economic insecurity.",lennie:"Can overpower others, but cannot control his own strength.",wife:"Can influence others, but cannot control her own circumstances."};
-const E=[['e0','crooks','SEPARATE LIVING QUARTERS',"A small room separate from the bunkhouse.","Crooks' room",288,80],
-['e1','candy','WORK / ECONOMIC SECURITY',"An older ranch worker's belongings. One missing hand makes certain jobs harder.","Bunkhouse",56,80],
-['e2','lennie','PHYSICAL POWER',"Heavy equipment built for a powerful worker. Strength is useful here. It doesn't necessarily decide who gives the orders.","Barn",158,80],
-['e3','wife','ISOLATION',"A woman's belongings sit apart from the men's working spaces. The ranch offers little privacy and fewer places to belong.","Stable",248,80]];
+const HW={s:'WITNESSED',h:'OVERHEARD',t:'SECONDHAND'},HWL={s:'Directly witnessed',h:'Overheard',t:'Secondhand (told to the witness)'};
+const LQ={room:`Where is Crooks allowed to be, and who decides?`,dog:`What happens to Candy's dog, and what does Candy do while it happens?`,work:`What does Candy have to fall back on if the ranch has no use for him?`,secret:`Something went quiet when the men came to the door. What were three men protecting?`,strength:`Everyone notices how strong Lennie is. What does each man do about it?`,george:`Who speaks for Lennie when it counts?`,pups:`Lennie, the pups, and the barn: what is he allowed to do, and who steps in?`,wife:`Who does Curley's wife get to talk to, and who talks about her?`,barn:`Sunday in the barn: who decides what happens next, and who is left behind or left out?`,say:`Whose word is listened to, and whose is brushed aside?`};
+/* [id, character, title, what the detective finds, what happened, involved, page, tags, x, y] */
+const E=[['e0','crooks',`The harness room`,`A shed leaning off the barn wall. A bunk made from a box of straw. Broken harness hanging to be mended, a can of tar, bottles of liniment. Several pairs of shoes, a shotgun, an alarm clock. A tattered dictionary, a law book, battered magazines, and gold-rimmed spectacles on a nail.`,`A shed attached to the barn where Crooks sleeps and works; the detective inspects what is in it.`,`Crooks`,`34`,['room'],288,80],
+['e1','candy',`Candy's broom, basins and figures`,`A push-broom stands against the wall. Wash basins are stacked by the door. On an apple box, a pencil stub and a scrap of paper covered in sums, added and added again.`,`The detective inspects the swamper's tools and belongings in the bunkhouse.`,`Candy`,`9, 14, 35`,['work'],56,80],
+['e2','lennie',`The pup box`,`A packing box under a manger in the barn. A lean shepherd bitch lies among her pups. In the straw nearby, a shallow hollow has been scooped out and covered over.`,`The detective inspects the pup box and the hollow in the straw.`,`Lennie, the pups`,`43, 46`,['pups'],158,80],
+['e3','wife',`A red-feathered mule`,`In the last stall the hay is pressed flat. Beside it lies a woman's red mule, trimmed with a small bouquet of ostrich feathers.`,`The detective inspects the last stall of the barn.`,`Curley's wife`,`16, 43, 46`,['wife','barn'],248,80]];
+/* each entry: [character, 'question|answer|follow-up|answer', title, how, what happened, involved, page, tags] */
 const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
-[['crooks',"You seem to hear quite a bit around here. What have you noticed about Crooks?|Can't say I know the man all that well. Folks don't spend much time in his room. That's about all I've noticed.|Why don't they?|Reckon you'd have to ask them.",'NOBODY VISITS HIS ROOM'],['lennie',"What about Lennie? The men seem to keep an eye on him.|Hard not to. Big fella like that can move half the ranch when he puts his mind to it.|And yet George does most of the talking for him?|Yeah. George usually knows when it's time to move along.",'GEORGE SPEAKS FOR LENNIE']],
-[['wife',"What's Curley's wife doing wandering around the ranch so much?|Looking for somebody to talk to, I reckon.|Doesn't she have Curley?|That's what I'd think.",'LOOKING FOR SOMEBODY TO TALK TO'],['candy',"And Candy? He seems to watch the boss when work comes up.|Reckon he's scared they'll set him loose, same as they would an old dog.|Has he said so?|Not to me. I just see how he looks.",'CANDY WATCHES THE BOSS']],
-[['crooks',"They say Crooks reads more than the rest of the men.|He's got books piled in there. More than the whole bunkhouse put together.|Ever talk books with him?|Nobody much talks with him about anything.",'BOOKS NOBODY ASKS ABOUT'],['wife',"Curley keeps tabs on her, doesn't he?|Always asking where she's got to. She keeps going anyhow.|Why's that?|Dunno. Might be she's got nowhere else she's let to be.",'CURLEY KEEPS TABS']]]},
+[['lennie',`You bucked barley beside Lennie on Friday. What was that like?|I was his partner on Slim's team. Never worked so hard keeping up with anybody, and I never did keep up. He tossed bags like they were pillows. Funny thing, he never said a word to any of us. Whenever somebody spoke to him, he looked around for George.`,`Lennie out-works his partner`,'s',`Lennie bucks barley beside the young hand on Slim's grain team.`,`Lennie, the young hand, Slim's team`,`11, 20`,['strength','george']],
+['crooks',`Do you men play horseshoes with Crooks?|Out at the pit after supper? Sure. Best arm on the ranch. Carlson said so in the bunkhouse, plain as day. Says he don't give nobody else a chance.|And in the bunkhouse? Does he play cards with you?|Cards? I've never seen him through that door. Not once since I hired on.`,`Crooks wins at horseshoes, but never comes inside`,'s',`The men pitch horseshoes outside after supper; Carlson remarks on Crooks's skill inside the bunkhouse.`,`Crooks, Carlson, Slim, the young hand`,`22`,['room']]],
+[['wife',`What's Curley's wife like around the ranch?|Always looking for Curley, to hear her tell it. She puts her head in wherever the men are. And Curley's always looking for her, going round and round outside. Slim says hello to her. Me, I look at my cards.|Why's that?|If Curley thought I was talking to her... and him the boss's son.`,`She turns up wherever the men are`,'s',`Curley's wife keeps appearing at the bunkhouse looking for Curley; Curley keeps appearing looking for her.`,`Curley's wife, Curley, Slim, the hands`,`16, 26`,['wife']],
+['lennie',`Did you hear anybody say anything about Lennie and the pups?|Crooks did. Friday night he put his head round the bunkhouse door and told Slim the big fella was taking the pups out of the nest. Called him 'Mr. Slim.' Slim said Lennie wouldn't hurt 'em and went out with him.|Did Crooks come inside?|Just his head round the door. Far as I've ever seen, he doesn't.`,`Crooks reports Lennie and the pups to Slim`,'h',`Crooks tells Slim at the bunkhouse door that Lennie is handling the new pups.`,`Crooks, Slim, Lennie`,`25–26`,['pups','room']]],
+[['candy',`Did you hear Candy say anything after the dog was shot?|Not what you'd call hearing. We were coming up to the bunkhouse door, me and Slim and the rest, and Candy was saying something to George. About how he should've done it himself, not let a stranger. I think that's it. I might've heard it wrong.|Did George answer?|Never heard. The door opened and they both shut up.`,`Candy: "I ought to have shot him myself"`,'h',`As the men reach the bunkhouse door, the young hand catches Candy telling George he ought to have shot his own dog.`,`Candy, George, the young hand`,`31`,['dog','secret']],
+['wife',`You were in the barn when she was found. What did you see?|She was half under the hay, like she'd lain down for a nap. Slim felt her neck, and that was all it took. Then Curley was off hollering for his shotgun. Said he'd shoot the big fella in the guts.|Did Curley stay with her?|No. He ran straight out.`,`Curley's wife found in the barn`,'s',`The men crowd into the barn; Slim examines her neck; Curley runs out for his shotgun.`,`Curley's wife, Slim, Curley, the hands`,`48`,['wife','barn']]]]},
 {n:'OBSERVANT HAND',k:'obs',x:190,y:112,st:[
-[['crooks',"Crooks seems sharper than most of the men here. Does that buy him any standing?|Being sharp and being respected ain't always the same thing.|Meaning?|Meaning a man can know plenty and still have folks decide he don't belong.",'SHARP IS NOT RESPECTED'],['candy',"Candy's been here a long time. I'd think that counts for something.|Counts for memories, maybe.|Not much else?|Depends what the boss is counting.",'YEARS DO NOT COUNT']],
-[['lennie',"Lennie looks like the strongest man on the ranch. Wouldn't that give him some power?|Power over a fence post, maybe. Doesn't mean he knows what to do with himself.",'POWER OVER A FENCE POST'],['wife',"And Curley's wife?|She's got a name, but not much say.|Her husband's the boss's son.|That ain't the same thing as having a voice.",'A NAME, NOT A VOICE']],
-[['lennie',"Who decides where Lennie goes?|Not Lennie. He follows George like a shadow follows a post.|Is that his choice?|A man follows what he can't do without.",'LENNIE FOLLOWS GEORGE'],['crooks',"Does Crooks ever sit with the men?|Never seen it. And I've been watching.|Would he be welcome?|I'd say that room says what the men won't.",'THE ROOM SAYS WHAT MEN WON\'T']]]},
+[['crooks',`Where does Crooks sleep, and who goes in there?|The harness room, a little shed leaning off the barn wall. His bunk's a box of straw. I've worked here since spring and I've never been past that door. Far as I've seen, only Slim and the boss go in.|Does he sleep in the bunkhouse?|Not that I've seen. Not for cards, either.`,`Crooks's separate room`,'s',`Crooks sleeps in a shed attached to the barn, away from the bunkhouse. The observant hand has only seen Slim and the boss visit.`,`Crooks, Slim, the boss`,`10, 34`,['room']],
+['candy',`You were in the bunkhouse when Candy's dog was taken out. What did Candy do?|After Carlson led it out, he lay on his bunk staring at the ceiling. Nobody said much. Slim talked about a mule's hoof, just to fill the quiet. Nobody dealt cards. Then we heard the shot, and Candy rolled over and faced the wall.|Did anyone speak to him?|Slim told him he could have a pup. Candy didn't answer.`,`Candy turns to the wall after the shot`,'s',`The men wait in silence in the bunkhouse until a shot sounds; Candy turns to the wall.`,`Candy, Carlson, Slim, George, Whit`,`24–25`,['dog']]],
+[['crooks',`The morning the new men were late, how did the boss treat Crooks?|He came into breakfast sore, asking where the new men were. Then he took it out on the stable buck. On Crooks, who had nothing to do with the bus or the work slips.|How did Crooks take it?|I wasn't close enough to see. Candy says he doesn't mind. A man learns not to show it, I'd say.`,`The boss takes his anger out on Crooks`,'s',`The boss, angry that the new men arrived late, gives Crooks "hell" at breakfast.`,`The boss, Crooks, the hands at breakfast`,`10`,['say']],
+['lennie',`What did Slim say about Weed, in the barn?|Slim turned to George and said, 'Maybe like that time in Weed you was tellin' about.' George just nodded.|What happened in Weed?|I couldn't tell you. I'd never heard of any trouble in Weed before that. Whatever it was, George told Slim and nobody else, as far as I know.`,`Slim recalls "that time in Weed"`,'h',`Slim reminds George of an earlier trouble in Weed in front of the men in the barn; George nods.`,`Slim, George`,`48`,['george']]],
+[['lennie',`What did George say to Slim and Curley about Lennie in the barn?|He asked Slim if they couldn't bring Lennie in and lock him up. Said Lennie's nuts, never done it to be mean. Then he asked Curley not to shoot him. Curley wouldn't have it. Told George to stick with the men so nobody'd think he'd had a hand in it.|Did George argue?|Weakly. Then he went along. His feet dragged.`,`George pleads for Lennie in the barn`,'h',`George asks that Lennie be locked up rather than shot; Curley refuses and keeps George close.`,`George, Slim, Curley, Carlson`,`49`,['george','barn']],
+['crooks',`Where was Crooks when the men crowded into the barn?|At the back, keeping out of the way. When the guns came up, Curley called him a name I won't repeat and said he had a shotgun. Told Carlson to take it. I didn't hear anyone ask Crooks.|Did Crooks say anything?|Not that I heard.`,`Crooks stays back; Curley orders his gun taken`,'s',`Crooks stays at the edge of the crowd in the barn; Curley, using a slur, tells Carlson to take Crooks's shotgun.`,`Crooks, Curley, Carlson`,`48–49`,['room','say','barn']]]]},
 {n:'BLUNT HAND',k:'blunt',x:228,y:104,st:[
-[['candy',"What happens to a ranch hand once he can't pull his weight?|Somebody else takes his place. That's how work goes.|Even after years of service?|Years don't lift a hay bale.",'REPLACED WHEN NOT USEFUL'],['crooks',"Why does Crooks keep to himself?|That's where he's supposed to be, far as some men figure.|And what do YOU figure?|I figure asking me won't change it.",'WHERE HE IS SUPPOSED TO BE']],
-[['lennie',"Does Lennie's strength make the other men respect him?|Respect? Maybe. Trust? That's another matter.",'RESPECT WITHOUT TRUST'],['wife',"Does Curley's wife have any real power around here?|She can get a man in trouble, sure.|That's power.|Small power. Borrowed power. Not the same thing.",'BORROWED POWER']],
-[['candy',"Does Candy have anyone to speak up for him?|Not that I've seen.|Not even George?|George listens. Listening ain't the boss changing his mind.",'NOBODY SPEAKS FOR CANDY'],['wife',"What do the men say about Curley's wife?|Stay clear. Trouble follows her.|Is that fair?|Didn't say fair. Said what the men say.",'THE MEN KEEP THEIR DISTANCE']]]},
+[['candy',`What was said about Candy's dog before it was shot?|Carlson said what everybody was thinking. It stank, it had no teeth, it couldn't eat. Offered to shoot it himself so Candy wouldn't have to. Candy said he'd had him since a pup. Then Slim said he'd want somebody to shoot him if he got old and a cripple. After that Candy gave in.|Did Candy have a say?|He had his say. Then Slim spoke. Candy looked at Slim like Slim's word was law. Around here it is.`,`Slim backs Carlson; Candy gives in`,'s',`Carlson argues for shooting Candy's old dog; Slim agrees; Candy, after looking to Slim for support, consents.`,`Candy, Carlson, Slim`,`23–24`,['dog','say']],
+['crooks',`What did Crooks come to the bunkhouse for Friday night?|To say the tar was warm for a mule's foot. Stuck his head in the door, said 'Mr. Slim.' Offered to do the doctoring himself. Slim said no, he'd do it.|Why not let him?|Slim does his own team. Probably nothing in it.`,`Crooks offers to help and is told no`,'s',`Crooks, at the bunkhouse door, offers to doctor the mule's hoof; Slim says he'll do it himself.`,`Crooks, Slim`,`25–26`,['say','room']]],
+[['lennie',`How did Curley hurt his hand?|A machine, they say. Caught it in a machine. Carlson drove him to the doctor in Soledad that same night. I've been on this ranch a good while and I've never seen a machine that breaks every bone in a hand.|Do you think that's the truth?|I think it's the story. Stories keep men in work. He's got it in a sling now. Doesn't say a word about it.`,`Curley's hand "caught in a machine"`,'t',`The ranch is told Curley's hand was caught in a machine; Carlson drove him to a doctor in Soledad.`,`Curley, Carlson (others unknown)`,`32–33, 44`,['strength']],
+['wife',`What do the men say about Curley's wife?|Not to her face. Slim says 'Hi, Good-lookin',' and that's about the limit. The rest of us keep clear. Carlson told Curley flat out, in front of everybody, to keep her home where she belongs.|How did Curley take that?|Told Carlson to step outside. Carlson said he'd kick his head off.`,`Carlson tells Curley to keep his wife home`,'h',`In the bunkhouse, Carlson tells Curley to keep his wife at home; Curley threatens him.`,`Carlson, Curley, Slim, Candy, Whit`,`31`,['wife']]],
+[['wife',`What did Curley do when his wife was found?|Ran for his shotgun, swearing he'd kill the big fella. Slim told him to stay with his wife. Curley said no, he was going. So Slim left Candy to sit with her.|Would you have left her?|A man wants the one who did it. She's past caring.`,`Curley leaves his wife's body to hunt Lennie`,'s',`Slim tells Curley to stay with his wife; Curley refuses and joins the hunt. Candy is told to stay with her.`,`Curley, Slim, Candy`,`49`,['wife','barn']],
+['lennie',`Why not bring Lennie in alive?|Slim didn't think a cage would do him any good. Strap him down, put him in a cage, he said. That ain't no good. George wanted him brought in, but Curley wouldn't hear of it. And Carlson's Luger was gone out of his bag. That settled it.|Did Slim think he should be shot?|Slim didn't say. Just said he guessed they had to get him.`,`Slim: locking Lennie up is "no good"`,'h',`Slim tells George that confining Lennie in a cage would be no good; Curley insists on shooting him; Carlson's Luger is missing.`,`Slim, George, Curley, Carlson`,`48–49`,['george','barn']]]]},
 {n:'OLD HAND',k:'old',x:132,y:120,st:[
-[['candy',"Candy's getting older. What happens to a man when his working days are behind him?|If he's got money saved, he gets by. If he ain't, well... that's another story.|And Candy?|Don't reckon he's got much tucked away.",'LITTLE SAVED'],['candy',"Does a man's age matter much on a ranch?|Age matters when the work gets heavy.",'AGE MATTERS WHEN WORK GETS HEAVY']],
-[['crooks',"Crooks is useful. Doesn't that protect him?|Useful don't make a man equal.",'USEFUL DON\'T MAKE EQUAL'],['lennie',"What about Lennie? He's stronger than most men twice his size.|Strong as a bull. Still needs George to tell him where to stand.",'STRONG AS A BULL']],
-[['wife',"Curley's wife is young. She ought to have plenty of life ahead of her.|Life ahead ain't the same as choices.",'LIFE AHEAD, NO CHOICES'],['candy',"Do a man's dreams matter on a ranch like this?|Dreams cost money. A man without land dreams on borrowed time.|Who's got one?|Candy and George, last I heard.",'THE FARM DREAM']]]}];
-const EV={};E.forEach(e=>EV[e[0]]={ch:e[1],t:e[2],o:e[3],s:e[4],cat:CAT[e[1]][0]});
-W4.forEach((w,wi)=>w.st.forEach((st,n)=>st.forEach((o,i)=>EV['w'+wi+n+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,cat:CAT[o[0]][n%2]})));
+[['candy',`How did Candy lose his hand?|Before my time, near enough. What I heard is it happened on the ranch, and the ranch gave him the broom and a bit of money for it. Not much. Nobody's asked what he does when the broom wears out.|Has Candy ever told you himself?|He doesn't talk about it. Just rubs the stump when he's worrying.`,`Candy lost his hand on the ranch; given the broom`,'t',`Candy lost his hand working on the ranch and was given the swamper's job and some money.`,`Candy, the ranch`,`9, 30`,['work']],
+['crooks',`Does Crooks ever come into the bunkhouse?|Christmas. The boss brought in a gallon of whisky and said drink hearty. They let Crooks in that night, the one night. A skinner named Smitty went after him, and the men wouldn't let Smitty use his feet, on account of Crooks's back. Crooks held his own.|And the rest of the year?|Same as ever. He's out in the harness room.`,`Crooks is allowed in only at Christmas`,'s',`At Christmas the boss brings whisky into the bunkhouse and Crooks is allowed in; Smitty fights him with his feet forbidden.`,`Crooks, Smitty, the boss, the hands`,`10`,['room']]],
+[['candy',`Did you notice anything odd about Candy on Friday night?|When we came up to the bunkhouse door, he and George and the big fella had been talking low. George said, 'Don't tell nobody,' and something about the boss canning them if word got out. Candy and the big fella were grinning like boys. I never saw Candy grin before.|What was it about?|I couldn't tell you. Money, maybe. A plan.`,`Candy, George and Lennie share a secret`,'h',`As the men approach the bunkhouse, George tells Candy and Lennie not to tell anyone something; Candy and Lennie are grinning.`,`Candy, George, Lennie`,`31`,['secret','work']],
+['lennie',`How did the men treat Lennie?|Depends on the man. Carlson joked about his name the first night. 'Ain't small at all.' Slim gave him a pup. Curley had it in for him from the start. Then Sunday, the same men were saying shoot him.|Did any of them like him?|Slim, I'd say. It didn't change what Curley wanted.`,`The men's treatment of Lennie turns`,'s',`Some men joke with Lennie, Slim gives him a pup, Curley resents him, and after Sunday the men set out to hunt him.`,`Lennie, Carlson, Slim, Curley`,`18, 26, 49`,['strength']]],
+[['wife',`Has Curley's wife ever spoken with you?|Not to speak of. She'd stand in the doorway and ask if Curley had been round. I'd say 'No, ma'am.' Curley doesn't like his wife talking to the men, and you don't want to be the one he's mad at.|Did she seem to want to talk?|She stood there as if she wanted somebody to. I'm too old to go looking for trouble.`,`She asks for Curley; nobody talks with her`,'s',`Curley's wife stops at the bunkhouse door asking for Curley; the old hand answers briefly and says no more.`,`Curley's wife, Curley, the old hand`,`16, 26`,['wife']],
+['candy',`Who stayed with Curley's wife in the barn?|Slim told Candy to. The rest of us went after the big fella. Candy didn't argue. When we left, he was squatting in the hay, watching her face.|Why Candy?|One hand. He can't run a man down. And he'd found her first.`,`Candy is left to watch over her`,'s',`Slim tells Candy to stay with Curley's wife while the other men go after Lennie.`,`Slim, Candy, the hands`,`49`,['barn','work']]]]}];
+const EV={};
+E.forEach(e=>EV[e[0]]={ch:e[1],t:e[2],o:e[3],s:'DETECTIVE',how:'s',ev:e[4],inv:e[5],pg:e[6],tg:e[7]});
+W4.forEach((w,wi)=>w.st.forEach((st,n)=>st.forEach((o,i)=>EV['w'+wi+n+i]={ch:o[0],t:o[2],o:o[1].split('|').filter((_,j)=>j%2).join(' … '),s:w.n,how:o[3],ev:o[4],inv:o[5],pg:o[6],tg:o[7]})));
 /* ---------- audio ---------- */
 /* ---------- audio ---------- */
 let AC, mg;
@@ -122,7 +133,7 @@ const VO = {
   blunt: [190, .05, 'square'],
   old: [130, .07, 'triangle']
 };
- 
+
 function audio() {
   if (!AC) {
     try {
@@ -140,25 +151,25 @@ function audio() {
   }
   if (AC.state === 'suspended') AC.resume();
 }
- 
+
 function tone(f, t, d, v, w, detune = 0) {
   if (!AC) return;
   const o = AC.createOscillator(), g = AC.createGain();
   o.type = w;
   o.frequency.value = f;
   if (detune) o.detune.value = detune;
- 
+
   const a = Math.min(0.08, d * 0.3); // Soft attack for music, fast for text blips
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(v, t + a);
   g.gain.exponentialRampToValueAtTime(.0001, t + d);
- 
+
   o.connect(g);
   g.connect(mg);
   o.start(t);
   o.stop(t + d + 0.05);
 }
- 
+
 // Low Rain Ambient Generator (Procedural White Noise + Lowpass Filter)
 function startRain() {
   if (!AC) return;
@@ -168,25 +179,25 @@ function startRain() {
   for (let i = 0; i < bufferSize; i++) {
     data[i] = Math.random() * 2 - 1; // White noise
   }
- 
+
   const noise = AC.createBufferSource();
   noise.buffer = buffer;
   noise.loop = true;
- 
+
   // Filter to make it sound like gentle rain, not harsh static
   const filter = AC.createBiquadFilter();
   filter.type = 'lowpass';
   filter.frequency.value = 400; // Deep, muffled rain rumble
- 
+
   const rainGain = AC.createGain();
   rainGain.gain.value = 0.03; // Very subtle background level
- 
+
   noise.connect(filter);
   filter.connect(rainGain);
   rainGain.connect(mg);
   noise.start();
 }
- 
+
 // Brushed Jazz Snare / Kick sound
 function drum(type, t) {
   if (!AC || s.mute) return;
@@ -197,7 +208,7 @@ function drum(type, t) {
     tone(180, t, 0.08, 0.02, 'triangle');
   }
 }
- 
+
 // DARK DETECTIVE NOIR THEME
 function music() {
   // Slow, walking upright bass notes (Dm - Dm7/C - BbMaj7 - A7alt)
@@ -210,25 +221,25 @@ function music() {
     [116.54, 146.83, 174.61, 220.00], // BbMaj7
     [110.00, 138.59, 164.81, 207.65]  // A7b9 (Suspenseful)
   ];
- 
+
   let step = 0;
- 
+
   // Very slow tempo: 1000ms per beat (~60 BPM walking pace)
   setInterval(() => {
     if (s.mute || !AC) return;
     const t = AC.currentTime;
     const bar = Math.floor(step / 4) % 4;
     const beat = step % 4;
- 
+
     // 1. Walking Upright Bass (Plays on beats 1 and 3)
     if (beat === 0 || beat === 2) {
       tone(bassLine[bar], t, 1.2, 0.18, 'triangle');
     }
- 
+
     // 2. Muffled Jazz Drums (Slow heartbeat pattern)
     if (beat === 0) drum('kick', t);
     if (beat === 2) drum('snare', t + 0.1);
- 
+
     // 3. Sparse, Smoky Piano Chords (Plays off-beat with moody sustain)
     if (beat === 1 && Math.random() < 0.75) {
       const chord = pianoChords[bar];
@@ -237,34 +248,34 @@ function music() {
         tone(freq, t + (idx * 0.04), 1.6, 0.04, 'sine', -5);
       });
     }
- 
+
     // 4. Rare Solo Lead Note (Melancholy saxophone/piano accent)
     if (beat === 3 && Math.random() < 0.4) {
       const soloNotes = [293.66, 349.23, 392.00, 415.30, 440.00, 523.25]; // D4 Blues scale with flat 5th
       const note = soloNotes[Math.floor(Math.random() * soloNotes.length)];
       tone(note, t + 0.2, 1.4, 0.05, 'sine', 8);
     }
- 
+
     step++;
   }, 1000);
 }
- 
+
 function blip(k) {
   const v = VO[k || 'det'];
   if (s.mute || !AC) return;
   tone(v[0] * (1 + Math.random() * .1), AC.currentTime, v[1], .05, v[2]);
 }
- 
+
 function clk() {
   if (s.mute || !AC) return;
   tone(1200, AC.currentTime, .03, .06, 'square');
   tone(300, AC.currentTime + .05, .05, .06, 'square');
 }
- 
+
 function muteUI() {
   document.querySelectorAll('.mu').forEach(b => b.textContent = s.mute ? 'UNMUTE' : 'MUTE');
 }
- 
+
 function toggleMute() {
   s.mute = s.mute ? 0 : 1;
   if (mg) mg.gain.value = s.mute ? 0 : 1;
@@ -317,7 +328,7 @@ R(g,166,67,8,7,'#44402f');R(g,284,66,10,8,'#3a3a3a');R(g,285,67,2,5,'#6a6458');R
 R(g,228,68,16,6,'#3a3a36');R(g,296,150,2,22,'#4a4538');R(g,312,150,2,22,'#4a4538');R(g,298,150,14,5,'#3a362d');
 const r=g.createRadialGradient(205,100,2,205,100,60);r.addColorStop(0,'rgba(190,175,100,.16)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(100,50,210,100)})();
 const SOL=[[16,16,80,48],[128,16,80,48],[224,16,48,48],[272,16,32,48],[16,128,64,48],[112,142,176,6]];
-const IT=[...E.map(e=>({t:'e',id:e[0],x:e[5],y:e[6]})),...W4.map((w,i)=>({t:'n',i,x:w.x,y:w.y})),{t:'o',x:48,y:186}];
+const IT=[...E.map(e=>({t:'e',id:e[0],x:e[8],y:e[9]})),...W4.map((w,i)=>({t:'n',i,x:w.x,y:w.y})),{t:'o',x:48,y:186}];
 const P={x:s.x,y:s.y},K={};
 const hit=(x,y)=>x<8||x>312||y<10||y>189||SOL.some(r=>x+4>r[0]&&x-4<r[0]+r[2]&&y>r[1]&&y-3<r[1]+r[3])||IT.some(i=>i.t=='n'&&Math.abs(x-i.x)<9&&Math.abs(y-i.y)<4);
 const zone=(x,y)=>y>148&&x<288?'FENCE / FIELD':x>288&&y>100?'RANCH ENTRANCE':x<110&&y>100?'DETECTIVE OFFICE':y<80&&x<110?'BUNKHOUSE':y<80&&x<216?'BARN':y<80&&x<272?'STABLE':y<80?`CROOKS' ROOM`:'WORK YARD';
@@ -339,7 +350,7 @@ let tw=null,dlg=null,ivTok=0;
 const stopTw=()=>{if(tw){clearInterval(tw.h);tw=null}};
 function type(e,t,cb,v){stopTw();e.textContent='';let i=0;tw={e,t,cb};tw.h=setInterval(()=>{e.textContent=t.slice(0,++i);if(i%2==0)blip(v);if(i>=t.length)fin()},18)}
 function fin(){if(!tw)return;const q=tw;stopTw();q.e.textContent=q.t;q.cb&&q.cb()}
-function say(box,e,lines,cb,sp){dlg={box,e,lines,i:0,cb};box.classList.add('on');if(sp)$('#dsp').textContent=sp;type(e,lines[0])}
+function say(box,e,lines,cb,sp,pg){dlg={box,e,lines,i:0,cb};box.classList.add('on');if(sp)$('#dsp').textContent=sp;if(box.id=='db')$('#dpg').textContent=pg?'OF MICE AND MEN, P. '+pg:'';type(e,lines[0])}
 function adv(){if(tw){fin();return}if(!dlg)return;if(++dlg.i>=dlg.lines.length){const d=dlg;dlg=null;d.box.classList.remove('on');d.cb&&d.cb()}else type(dlg.e,dlg.lines[dlg.i])}
 const open=id=>{document.querySelectorAll('.ov.on').forEach(o=>o.classList.remove('on'));$(id).classList.add('on')};
 const closeAll=()=>{stopTw();dlg=null;ivTok++;document.querySelectorAll('.ov.on,#db.on').forEach(o=>o.classList.remove('on'));save()};
@@ -358,32 +369,29 @@ $('#bm').onclick=()=>open('#mn');$('#bb').onclick=$('#m2').onclick=()=>{open('#b
 $('#m3').onclick=()=>open('#how');$('#bf').onclick=$('#bf2').onclick=f1;$('#bmu').onclick=$('#m5').onclick=toggleMute;
 $('#m4').onclick=()=>{if(confirm('Wipe the investigation and start over?')){try{localStorage.removeItem(SK)}catch(x){}location.reload()}};
 function interact(){if(!near||busy()||!s.started)return;const i=near;
-if(i.t=='e'){const e=E.find(x=>x[0]==i.id);say($('#db'),$('#dt'),[e[3],'EVIDENCE: '+e[2]],()=>{pin(e[0])},'DETECTIVE')}
+if(i.t=='e'){const e=E.find(x=>x[0]==i.id);say($('#db'),$('#dt'),[e[3],'EVIDENCE: '+e[2].toUpperCase()],()=>{pin(e[0])},'DETECTIVE',e[6])}
 else if(i.t=='o'){open('#bd');rb()}else talk(i.i)}
 /* ---------- interviews ---------- */
 let cur;
 function msg(k,t,v){const d=document.createElement('div');d.className='m '+k;const b=document.createElement('b'),p=document.createElement('span');b.textContent=k=='D'?'DETECTIVE':W4[cur].n;p.textContent=t;d.append(b,p);$('#log').append(d);$('#log').scrollTop=1e5;return p}
+function addPg(wi,st,o){const q=W4[wi].st[st][o],d=document.createElement('div');d.className='pg';d.textContent=HW[q[3]]+' · OF MICE AND MEN, P. '+q[6];$('#log').append(d);$('#log').scrollTop=1e5}
 const lines=(wi,st,o)=>W4[wi].st[st][o][1].split('|');
 function talk(wi){cur=wi;open('#iv');ivTok++;$('#ivn').textContent=W4[wi].n;portrait($('#pc').getContext('2d'),LOOK[W4[wi].k]);
-$('#log').innerHTML='';s.asked[wi].forEach((o,st)=>lines(wi,st,o).forEach((t,j)=>msg(j%2?'A':'D',t)));rc()}
+$('#log').innerHTML='';s.asked[wi].forEach((o,st)=>{lines(wi,st,o).forEach((t,j)=>msg(j%2?'A':'D',t));addPg(wi,st,o)});rc()}
 function rc(){const a=s.asked[cur],h=$('#chs');h.innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(3-a.length);
 if(a.length<3)W4[cur].st[a.length].forEach((q,i)=>h.append(btn(q[1].split('|')[0],()=>ask(i),'b q')));else{const p=document.createElement('p');p.className='dim';p.textContent='He has nothing more to say.';h.append(p)}
 h.append(btn('LEAVE',closeAll,'b s'));ui()}
 function ask(i){const wi=cur,st=s.asked[wi].length,ls=lines(wi,st,i),tok=++ivTok;$('#chs').innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(2-st);let k=0;
-(function nx(){if(tok!=ivTok)return;if(k>=ls.length){s.asked[wi].push(i);pin('w'+wi+st+i);save();rc();return}const j=k++;type(msg(j%2?'A':'D',''),ls[j],()=>setTimeout(nx,350),j%2?W4[wi].k:'det')})()}
+(function nx(){if(tok!=ivTok)return;if(k>=ls.length){addPg(wi,st,i);s.asked[wi].push(i);pin('w'+wi+st+i);save();rc();return}const j=k++;type(msg(j%2?'A':'D',''),ls[j],()=>setTimeout(nx,350),j%2?W4[wi].k:'det')})()}
 /* ---------- board ---------- */
 let LK=[];
 const rot=id=>((id.split('').reduce((a,x)=>a+x.charCodeAt(0)*7,0)%9)-4)*.8;
-const cnt=k=>s.ev.filter(i=>EV[i].ch===k).length,nInf=k=>{const n=cnt(k);return n>=3?2:n>=2?1:0};
 const card=(id,cls,h,sub)=>`<div class="card ${cls}${s.seen.includes(id)?'':' drop'}" id="${id}" tabindex="0" style="--r:${rot(id)}deg" onclick="det('${id}')" onkeydown="if(event.key==='Enter'){det('${id}');event.stopPropagation()}"><i class="pin"></i>${h}${sub?'<small>'+sub+'</small>':''}</div>`;
-function rb(){let h='',x='';LK=[];const ids=[];
-for(const k in CH){const evs=s.ev.filter(i=>EV[i].ch===k),n=nInf(k);h+='<div class="col">';
-evs.forEach((id,j)=>{h+=card('c_'+id,'ev','<b>'+EV[id].t+'</b>',EV[id].s);ids.push('c_'+id);if(n)LK.push(['c_'+id,'i_'+k+'_'+Math.min(j<2?0:1,n-1)])});
-for(let j=0;j<n;j++){h+=card('i_'+k+'_'+j,'inf','<b>INFERENCE</b>'+INF[k][j]);ids.push('i_'+k+'_'+j);LK.push(['i_'+k+'_'+j,'h_'+k])}
-h+=card('h_'+k,'hd','<canvas id="pt_'+k+'" width="16" height="26"></canvas>'+CH[k],evs.length+' on file');ids.push('h_'+k);
-for(let j=0;j<n;j++){h+=card('p_'+k+'_'+j,'chip',CAT[k][j]);ids.push('p_'+k+'_'+j);LK.push(['h_'+k,'p_'+k+'_'+j])}
-h+='</div>'}
-XC.forEach(z=>{if(nInf(z[0])&&nInf(z[1])){LK.push(['h_'+z[0],'h_'+z[1]]);x+=`<div class="xn"><b>${CH[z[0]]} ↔ ${CH[z[1]]}:</b> ${z[2]}</div>`}});
+function rb(){let h='',x='';LK=[];const ids=[],TG={},ps=new Set();
+for(const k in CH){const evs=s.ev.filter(i=>EV[i].ch===k);h+='<div class="col">'+card('h_'+k,'hd','<canvas id="pt_'+k+'" width="16" height="26"></canvas>'+CH[k],evs.length+' on file');ids.push('h_'+k);
+evs.forEach(id=>{const e=EV[id],cid='c_'+id;h+=card(cid,'ev','<b>'+e.t+'</b>',HW[e.how]+' · '+e.s+'<br><span class="pg">P. '+e.pg+'</span>');ids.push(cid);(e.tg||[]).forEach(g=>(TG[g]=TG[g]||[]).push(cid))});h+='</div>'}
+for(const g in TG)if(TG[g].length>1){for(let j=1;j<TG[g].length;j++){const p=[TG[g][j-1],TG[g][j]],key=p.join('>');if(!ps.has(key)){ps.add(key);LK.push(p)}}
+x+=`<div class="xn"><b>LEAD:</b> ${LQ[g]}<br><span class="dim">${TG[g].map(c=>EV[c.slice(2)].t).join('  •  ')}</span></div>`}
 if(!s.ev.length)x='<div class="xn dim">The board is bare. Walk the ranch, examine the places, and question the hands.</div>';
 $('#cols').innerHTML=h;$('#xn').innerHTML=x;
 requestAnimationFrame(()=>{for(const k in CH)portrait($('#pt_'+k).getContext('2d'),LOOK[k]);threads();ids.forEach(i=>{if(!s.seen.includes(i))s.seen.push(i)});LK.forEach(l=>{const k=l.join('>');if(!s.seen.includes(k))s.seen.push(k)});save()})}
@@ -392,10 +400,8 @@ LK.forEach((l,n)=>{const a=$('#'+l[0]),b=$('#'+l[1]);if(!a||!b)return;const ra=a
 h+=`<path pathLength="1" class="${nw}" d="M${x1} ${y1} Q${(x1+x2)/2+sw} ${(y1+y2)/2+20} ${x2} ${y2}"/>`});svg.innerHTML=h}
 addEventListener('resize',()=>{if($('#bd').classList.contains('on'))threads()});
 function det(id){const p=id.split('_');let h='';
-if(p[0]==='c'){const e=EV[p[1]],k=e.ch,j=s.ev.filter(i=>EV[i].ch===k).indexOf(p[1]),n=nInf(k);h=`<h3>${e.t}</h3><p class="q">“${e.o}”</p><p>SOURCE: ${e.s}<br>CHARACTER: ${CH[k]}<br>POWER CATEGORY: ${e.cat}</p>`+(n?`<p class="infx"><b>INFERENCE:</b> ${INF[k][Math.min(j<2?0:1,n-1)]}</p>`:'<p><i>Not enough evidence on this person yet to draw an inference.</i></p>')}
-else if(p[0]==='i')h=`<h3>INFERENCE: ${CH[p[1]]}</h3><p class="infx">${INF[p[1]][p[2]]}</p><p>Built from:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+'</li>').join('')}</ul>`;
-else if(p[0]==='p'){const k=CAT[p[1]][p[2]];h=`<h3>${k}</h3><p>${CD[k]}</p><p>Linked to ${CH[p[1]]}. A question to weigh, not a score.</p>`}
-else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' ('+EV[i].s+')</li>').join('')||'<li>none yet</li>'}</ul>`;
+if(p[0]==='c'){const e=EV[p[1]];h=`<h3>${e.t}</h3><p><b>WHAT HAPPENED:</b> ${e.ev}</p><p><b>INVOLVED:</b> ${e.inv}</p><p><b>SUPPLIED BY:</b> ${e.s}<br><b>HOW IT IS KNOWN:</b> ${HWL[e.how]}</p><p class="q">“${e.o}”</p><span class="pg">OF MICE AND MEN, P. ${e.pg}</span>`}
+else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' ('+EV[i].s+', '+HW[EV[i].how].toLowerCase()+')</li>').join('')||'<li>none yet</li>'}</ul>`;
 $('#mdc').innerHTML=h;$('#mdc').append(btn('CLOSE',()=>$('#md').classList.remove('on')));$('#md').classList.add('on')}
 /* ---------- final case ---------- */
 function f1(){if(s.ev.length<12)return;rb();$('#bd').classList.add('on');const b=$('#fnb');b.innerHTML='';
@@ -424,3 +430,4 @@ cv.onclick=()=>interact();
 setInterval(()=>{if(s.started){s.x=P.x;s.y=P.y;save()}},3000);
 muteUI();ui();requestAnimationFrame(loop);
 </script></body></html>
+
