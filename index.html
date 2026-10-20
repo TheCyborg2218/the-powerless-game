@@ -23,6 +23,7 @@ h1{font:clamp(22px,6vw,48px) 'Press Start 2P',monospace;margin:14px 0 10px;text-
 #hud{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;right:10px;display:none;justify-content:space-between;align-items:center;z-index:4;font-size:11px;color:var(--ink);text-shadow:2px 2px #000}
 body.g #hud{display:flex}
 #pr{position:fixed;bottom:100px;left:0;right:0;text-align:center;font-size:12px;color:var(--y);z-index:4;pointer-events:none;text-shadow:2px 2px #000}
+#dev{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:70;background:#a82a2a;color:#fff;font:10px 'Press Start 2P',monospace;padding:6px 16px;display:none;letter-spacing:2px}body.dev #dev{display:block}
 #toast{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:60;background:#12120f;border:2px solid var(--y);color:var(--y);padding:10px 14px;font-size:11px;display:none;text-align:center}
 #db{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:min(860px,94vw);background:#0d0e0c;border:3px solid var(--ln);box-shadow:0 0 0 3px #000;padding:16px 22px 20px;z-index:8;display:none;min-height:120px;cursor:pointer}
 #db.on{display:block;animation:fi .3s}#dsp{font-size:12px;color:var(--y)}#dt{margin-top:10px;font-size:28px;line-height:1.35}
@@ -61,7 +62,7 @@ body.g #hud{display:flex}
 </style></head><body>
 <div id="app"><canvas id="cv"></canvas></div><div id="fl"></div>
 <div id="hud"><span id="ar" class="px"></span><span><button class="b s" id="bm">MENU</button><button class="b s" id="bb">BOARD</button><button class="b s" id="bf" disabled>FINAL CASE</button><button class="b s mu" id="bmu">MUTE</button></span></div>
-<div id="pr" class="px"></div><div id="toast" class="px"></div>
+<div id="dev">DEV MODE</div><div id="pr" class="px"></div><div id="toast" class="px"></div>
 <div id="db"><b id="dsp" class="px">DETECTIVE</b><div id="dt"></div><div id="dpg" class="pg" style="margin-top:10px"></div></div>
 <div class="ov on" id="title"><canvas id="tc" width="80" height="28" style="image-rendering:pixelated;width:min(480px,86vw)"></canvas>
 <h1>THE POWERLESS</h1><p class="sub">An Investigation of Power on a California Ranch</p><p class="dim" style="max-width:600px;font-size:27px">“Everyone has something to lose. Not everyone has the power to protect it.”</p>
@@ -87,7 +88,7 @@ const QT={crooks:"Can think, but cannot escape racial exclusion.",candy:"Can wor
 const HW={s:'WITNESSED',h:'OVERHEARD',t:'SECONDHAND'},HWL={s:'Directly witnessed',h:'Overheard',t:'Secondhand (told to the witness)'};
 const LQ={room:`Where is Crooks allowed to be, and who decides?`,dog:`What happens to Candy's dog, and what does Candy do while it happens?`,work:`What does Candy have to fall back on if the ranch has no use for him?`,secret:`Something went quiet when the men came to the door. What were three men protecting?`,strength:`Everyone notices how strong Lennie is. What does each man do about it?`,george:`Who speaks for Lennie when it counts?`,pups:`Lennie, the pups, and the barn: what is he allowed to do, and who steps in?`,wife:`Who does Curley's wife get to talk to, and who talks about her?`,barn:`Sunday in the barn: who decides what happens next, and who is left behind or left out?`,say:`Whose word is listened to, and whose is brushed aside?`};
 /* [id, character, title, what the detective finds, what happened, involved, page, tags, x, y] */
-const E=[['e0','crooks',`The harness room`,`A shed leaning off the barn wall. A bunk made from a box of straw. Broken harness hanging to be mended, a can of tar, bottles of liniment. Several pairs of shoes, a shotgun, an alarm clock. A tattered dictionary, a law book, battered magazines, and gold-rimmed spectacles on a nail.`,`A shed attached to the barn where Crooks sleeps and works; the detective inspects what is in it.`,`Crooks`,`34`,['room'],288,80],
+const E=[['e0','crooks',`Crooks' room`,`Crooks' room: a shed leaning off the barn wall. A bunk made from a box of straw. Broken harness hanging to be mended, a can of tar, bottles of liniment. Several pairs of shoes, a shotgun, an alarm clock. A tattered dictionary, a law book, battered magazines, and gold-rimmed spectacles on a nail.`,`A shed attached to the barn where Crooks sleeps and works; the detective inspects what is in it.`,`Crooks`,`34`,['room'],288,80],
 ['e1','candy',`Candy's broom, basins and figures`,`A push-broom stands against the wall. Wash basins are stacked by the door. On an apple box, a pencil stub and a scrap of paper covered in sums, added and added again.`,`The detective inspects the swamper's tools and belongings in the bunkhouse.`,`Candy`,`9, 14, 35`,['work'],56,80],
 ['e2','lennie',`The pup box`,`A packing box under a manger in the barn. A lean shepherd bitch lies among her pups. In the straw nearby, a shallow hollow has been scooped out and covered over.`,`The detective inspects the pup box and the hollow in the straw.`,`Lennie, the pups`,`43, 46`,['pups'],158,80],
 ['e3','wife',`A red-feathered mule`,`In the last stall the hay is pressed flat. Beside it lies a woman's red mule, trimmed with a small bouquet of ostrich feathers.`,`The detective inspects the last stall of the barn.`,`Curley's wife`,`16, 43, 46`,['wife','barn'],248,80]];
@@ -100,7 +101,7 @@ const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
 [['candy',`Did you hear Candy say anything after the dog was shot?|Not what you'd call hearing. We were coming up to the bunkhouse door, me and Slim and the rest, and Candy was saying something to George. About how he should've done it himself, not let a stranger. I think that's it. I might've heard it wrong.|Did George answer?|Never heard. The door opened and they both shut up.`,`Candy: "I ought to have shot him myself"`,'h',`As the men reach the bunkhouse door, the young hand catches Candy telling George he ought to have shot his own dog.`,`Candy, George, the young hand`,`31`,['dog','secret']],
 ['wife',`You were in the barn when she was found. What did you see?|She was half under the hay, like she'd lain down for a nap. Slim felt her neck, and that was all it took. Then Curley was off hollering for his shotgun. Said he'd shoot the big fella in the guts.|Did Curley stay with her?|No. He ran straight out.`,`Curley's wife found in the barn`,'s',`The men crowd into the barn; Slim examines her neck; Curley runs out for his shotgun.`,`Curley's wife, Slim, Curley, the hands`,`48`,['wife','barn']]]]},
 {n:'OBSERVANT HAND',k:'obs',x:190,y:112,st:[
-[['crooks',`Where does Crooks sleep, and who goes in there?|The harness room, a little shed leaning off the barn wall. His bunk's a box of straw. I've worked here since spring and I've never been past that door. Far as I've seen, only Slim and the boss go in.|Does he sleep in the bunkhouse?|Not that I've seen. Not for cards, either.`,`Crooks's separate room`,'s',`Crooks sleeps in a shed attached to the barn, away from the bunkhouse. The observant hand has only seen Slim and the boss visit.`,`Crooks, Slim, the boss`,`10, 34`,['room']],
+[['crooks',`Where does Crooks sleep, and who goes in there?|Crooks' room, a little shed leaning off the barn wall. His bunk's a box of straw. I've worked here since spring and I've never been past that door. Far as I've seen, only Slim and the boss go in.|Does he sleep in the bunkhouse?|Not that I've seen. Not for cards, either.`,`Crooks's separate room`,'s',`Crooks sleeps in a shed attached to the barn, away from the bunkhouse. The observant hand has only seen Slim and the boss visit.`,`Crooks, Slim, the boss`,`10, 34`,['room']],
 ['candy',`You were in the bunkhouse when Candy's dog was taken out. What did Candy do?|After Carlson led it out, he lay on his bunk staring at the ceiling. Nobody said much. Slim talked about a mule's hoof, just to fill the quiet. Nobody dealt cards. Then we heard the shot, and Candy rolled over and faced the wall.|Did anyone speak to him?|Slim told him he could have a pup. Candy didn't answer.`,`Candy turns to the wall after the shot`,'s',`The men wait in silence in the bunkhouse until a shot sounds; Candy turns to the wall.`,`Candy, Carlson, Slim, George, Whit`,`24–25`,['dog']]],
 [['crooks',`The morning the new men were late, how did the boss treat Crooks?|He came into breakfast sore, asking where the new men were. Then he took it out on the stable buck. On Crooks, who had nothing to do with the bus or the work slips.|How did Crooks take it?|I wasn't close enough to see. Candy says he doesn't mind. A man learns not to show it, I'd say.`,`The boss takes his anger out on Crooks`,'s',`The boss, angry that the new men arrived late, gives Crooks "hell" at breakfast.`,`The boss, Crooks, the hands at breakfast`,`10`,['say']],
 ['lennie',`What did Slim say about Weed, in the barn?|Slim turned to George and said, 'Maybe like that time in Weed you was tellin' about.' George just nodded.|What happened in Weed?|I couldn't tell you. I'd never heard of any trouble in Weed before that. Whatever it was, George told Slim and nobody else, as far as I know.`,`Slim recalls "that time in Weed"`,'h',`Slim reminds George of an earlier trouble in Weed in front of the men in the barn; George nods.`,`Slim, George`,`48`,['george']]],
@@ -115,7 +116,7 @@ const W4=[{n:'YOUNG HAND',k:'young',x:112,y:100,st:[
 ['lennie',`Why not bring Lennie in alive?|Slim didn't think a cage would do him any good. Strap him down, put him in a cage, he said. That ain't no good. George wanted him brought in, but Curley wouldn't hear of it. And Carlson's Luger was gone out of his bag. That settled it.|Did Slim think he should be shot?|Slim didn't say. Just said he guessed they had to get him.`,`Slim: locking Lennie up is "no good"`,'h',`Slim tells George that confining Lennie in a cage would be no good; Curley insists on shooting him; Carlson's Luger is missing.`,`Slim, George, Curley, Carlson`,`48–49`,['george','barn']]]]},
 {n:'OLD HAND',k:'old',x:132,y:120,st:[
 [['candy',`How did Candy lose his hand?|Before my time, near enough. What I heard is it happened on the ranch, and the ranch gave him the broom and a bit of money for it. Not much. Nobody's asked what he does when the broom wears out.|Has Candy ever told you himself?|He doesn't talk about it. Just rubs the stump when he's worrying.`,`Candy lost his hand on the ranch; given the broom`,'t',`Candy lost his hand working on the ranch and was given the swamper's job and some money.`,`Candy, the ranch`,`9, 30`,['work']],
-['crooks',`Does Crooks ever come into the bunkhouse?|Christmas. The boss brought in a gallon of whisky and said drink hearty. They let Crooks in that night, the one night. A skinner named Smitty went after him, and the men wouldn't let Smitty use his feet, on account of Crooks's back. Crooks held his own.|And the rest of the year?|Same as ever. He's out in the harness room.`,`Crooks is allowed in only at Christmas`,'s',`At Christmas the boss brings whisky into the bunkhouse and Crooks is allowed in; Smitty fights him with his feet forbidden.`,`Crooks, Smitty, the boss, the hands`,`10`,['room']]],
+['crooks',`Does Crooks ever come into the bunkhouse?|Christmas. The boss brought in a gallon of whisky and said drink hearty. They let Crooks in that night, the one night. A skinner named Smitty went after him, and the men wouldn't let Smitty use his feet, on account of Crooks's back. Crooks held his own.|And the rest of the year?|Same as ever. He's out in his own room by the barn.`,`Crooks is allowed in only at Christmas`,'s',`At Christmas the boss brings whisky into the bunkhouse and Crooks is allowed in; Smitty fights him with his feet forbidden.`,`Crooks, Smitty, the boss, the hands`,`10`,['room']]],
 [['candy',`Did you notice anything odd about Candy on Friday night?|When we came up to the bunkhouse door, he and George and the big fella had been talking low. George said, 'Don't tell nobody,' and something about the boss canning them if word got out. Candy and the big fella were grinning like boys. I never saw Candy grin before.|What was it about?|I couldn't tell you. Money, maybe. A plan.`,`Candy, George and Lennie share a secret`,'h',`As the men approach the bunkhouse, George tells Candy and Lennie not to tell anyone something; Candy and Lennie are grinning.`,`Candy, George, Lennie`,`31`,['secret','work']],
 ['lennie',`How did the men treat Lennie?|Depends on the man. Carlson joked about his name the first night. 'Ain't small at all.' Slim gave him a pup. Curley had it in for him from the start. Then Sunday, the same men were saying shoot him.|Did any of them like him?|Slim, I'd say. It didn't change what Curley wanted.`,`The men's treatment of Lennie turns`,'s',`Some men joke with Lennie, Slim gives him a pup, Curley resents him, and after Sunday the men set out to hunt him.`,`Lennie, Carlson, Slim, Curley`,`18, 26, 49`,['strength']]],
 [['wife',`Has Curley's wife ever spoken with you?|Not to speak of. She'd stand in the doorway and ask if Curley had been round. I'd say 'No, ma'am.' Curley doesn't like his wife talking to the men, and you don't want to be the one he's mad at.|Did she seem to want to talk?|She stood there as if she wanted somebody to. I'm too old to go looking for trouble.`,`She asks for Curley; nobody talks with her`,'s',`Curley's wife stops at the bunkhouse door asking for Curley; the old hand answers briefly and says no more.`,`Curley's wife, Curley, the old hand`,`16, 26`,['wife']],
@@ -332,6 +333,9 @@ const IT=[...E.map(e=>({t:'e',id:e[0],x:e[8],y:e[9]})),...W4.map((w,i)=>({t:'n',
 const P={x:s.x,y:s.y},K={};
 const hit=(x,y)=>x<8||x>312||y<10||y>189||SOL.some(r=>x+4>r[0]&&x-4<r[0]+r[2]&&y>r[1]&&y-3<r[1]+r[3])||IT.some(i=>i.t=='n'&&Math.abs(x-i.x)<9&&Math.abs(y-i.y)<4);
 const zone=(x,y)=>y>148&&x<288?'FENCE / FIELD':x>288&&y>100?'RANCH ENTRANCE':x<110&&y>100?'DETECTIVE OFFICE':y<80&&x<110?'BUNKHOUSE':y<80&&x<216?'BARN':y<80&&x<272?'STABLE':y<80?`CROOKS' ROOM`:'WORK YARD';
+let DEV=0;const evl=()=>DEV?Object.keys(EV):s.ev;
+function setDev(v){DEV=v;document.body.classList.toggle('dev',!!v);ui();toast('DEV MODE '+(v?'ON':'OFF'));if($('#bd').classList.contains('on'))rb();if($('#iv').classList.contains('on'))talk(cur)}
+const DK=[];function devKey(e){if(!/^[0-9]$/.test(e.key))return;const t=Date.now();DK.push([e.key,t]);if(DK.length>8)DK.shift();if(DK.length==8&&DK.map(x=>x[0]).join('')=='12345678'&&t-DK[0][1]<2500){DK.length=0;setDev(!DEV)}}
 const busy=()=>!!document.querySelector('.ov.on,#db.on');
 let near=null,lz='',last=0;
 function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;
@@ -341,7 +345,7 @@ near=null;let bd=22;IT.forEach(i=>{const d=Math.hypot(P.x-i.x,P.y-i.y);if(d<bd){
 $('#pr').textContent=!busy()&&near&&s.started?'[E] '+(near.t=='n'?'TALK':near.t=='o'?'CASE BOARD':'EXAMINE'):'';
 const z=zone(P.x,P.y);if(z!=lz){lz=z;$('#ar').textContent=z}
 c.drawImage(bg,0,0);const pul=.5+.5*Math.sin(t/300);
-IT.forEach(i=>{if(i.t=='o'||i.t=='e'&&!s.ev.includes(i.id)||i.t=='n'&&s.asked[i.i].length<3){c.fillStyle=`rgba(205,195,125,${.35+.6*pul})`;c.fillRect(i.x-1,i.y-(i.t=='n'?30:13)|0,3,3)}});
+IT.forEach(i=>{if(DEV||i.t=='o'||i.t=='e'&&!s.ev.includes(i.id)||i.t=='n'&&s.asked[i.i].length<3){c.fillStyle=DEV?`rgba(110,200,120,${.35+.6*pul})`:`rgba(205,195,125,${.35+.6*pul})`;c.fillRect(i.x-1,i.y-(i.t=='n'?30:13)|0,3,3)}});
 const fr=P.m?(t/140|0)%2:0;
 [{y:P.y,d:()=>man(c,P.x-6,P.y-18,LOOK.det,fr)},...IT.filter(i=>i.t=='n').map(i=>({y:i.y,d:()=>man(c,i.x-6,i.y-18,LOOK[W4[i.i].k],0)}))].sort((a,b)=>a.y-b.y).forEach(e=>e.d());
 requestAnimationFrame(loop)}
@@ -356,12 +360,12 @@ const open=id=>{document.querySelectorAll('.ov.on').forEach(o=>o.classList.remov
 const closeAll=()=>{stopTw();dlg=null;ivTok++;document.querySelectorAll('.ov.on,#db.on').forEach(o=>o.classList.remove('on'));save()};
 function btn(t,f,k='b'){const b=document.createElement('button');b.className=k;b.textContent=t;b.onclick=f;return b}
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2800)}
-function ui(){const u=s.ev.length>=12;$('#bf').disabled=$('#bf2').disabled=!u;if(u&&!s.unl){s.unl=1;save();toast('FINAL CASE UNLOCKED')}$('#tcn').style.display=s.started?'':'none'}
+function ui(){const u=DEV||s.ev.length>=12;$('#bf').disabled=$('#bf2').disabled=!u;if(!DEV&&u&&!s.unl){s.unl=1;save();toast('FINAL CASE UNLOCKED')}$('#tcn').style.display=s.started?'':'none'}
 function pin(id){if(s.ev.includes(id))return;s.ev.push(id);save();toast('PINNED: '+EV[id].t);clk();ui()}
 /* ---------- flow ---------- */
 function startPlay(){document.body.classList.add('g');closeAll();ui()}
 $('#tb').onclick=()=>{audio();if(s.started&&!confirm('Start a new investigation? Saved progress will be erased.'))return;const m=s.mute;s=fresh();s.mute=m;s.started=1;save();Object.assign(P,{x:s.x,y:s.y});open('#intro');
-say($('#intro'),$('#itx'),[`California. 1930s.`,`The ranch hands work, sleep, eat, and move on.`,`But beneath the routine lies another system — one built from race, age, ability, money, gender, and fear.`,`Four people live somewhere near the bottom of that system.`,`My job isn't to decide who's strongest.`,`It's to find out who has the least power.`],()=>{startPlay();say($('#db'),$('#dt'),[`I've seen plenty of hard places in the city. But this ranch has its own kind of trouble. I'm here to find out who has the least say in their own life.`,`Walk the ranch. Talk to the hands. Pin what I find to the board. Twelve pieces of evidence, and I can make my case.`],ui,'DETECTIVE')})};
+say($('#intro'),$('#itx'),[`California. 1930s.`,`Three weeks ago, on a ranch near Soledad, a man named Lennie Small died.`,`The shouting has stopped. The men are back at work. But nobody has forgotten.`,`The ranch hands work, sleep, eat, and move on.`,`But beneath the routine lies another system — one built from race, age, ability, money, gender, and fear.`,`Four people live somewhere near the bottom of that system.`,`My job isn't to decide who's strongest.`,`It's to find out who has the least power.`],()=>{startPlay();say($('#db'),$('#dt'),[`I'm a detective from the city. I wasn't here when it happened. I came three weeks after Lennie's death: close enough that everyone remembers, far enough that the men will talk. I'm here to study who on this ranch has the least say in their own life.`,`Walk the ranch. Talk to the hands. Pin what I find to the board. Twelve pieces of evidence, and I can make my case.`],ui,'DETECTIVE')})};
 $('#intro').onclick=adv;$('#db').onclick=adv;
 $('#tcn').onclick=()=>{audio();Object.assign(P,{x:s.x,y:s.y});startPlay()};$('#th').onclick=()=>open('#how');
 $('#hb').onclick=()=>s.started&&document.body.classList.contains('g')?open('#mn'):open('#title');
@@ -378,7 +382,8 @@ function addPg(wi,st,o){const q=W4[wi].st[st][o],d=document.createElement('div')
 const lines=(wi,st,o)=>W4[wi].st[st][o][1].split('|');
 function talk(wi){cur=wi;open('#iv');ivTok++;$('#ivn').textContent=W4[wi].n;portrait($('#pc').getContext('2d'),LOOK[W4[wi].k]);
 $('#log').innerHTML='';s.asked[wi].forEach((o,st)=>{lines(wi,st,o).forEach((t,j)=>msg(j%2?'A':'D',t));addPg(wi,st,o)});rc()}
-function rc(){const a=s.asked[cur],h=$('#chs');h.innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(3-a.length);
+function askDev(n,i){lines(cur,n,i).forEach((t,j)=>msg(j%2?'A':'D',t));addPg(cur,n,i)}
+function rc(){const a=s.asked[cur],h=$('#chs');h.innerHTML='';if(DEV){$('#left').textContent='DEV: ALL 6 QUESTIONS (not saved)';W4[cur].st.forEach((st,n)=>st.forEach((q,i)=>h.append(btn((n*2+i+1)+'. '+q[1].split('|')[0],()=>askDev(n,i),'b q'))));h.append(btn('LEAVE',closeAll,'b s'));return}$('#left').textContent='QUESTIONS LEFT: '+(3-a.length);
 if(a.length<3)W4[cur].st[a.length].forEach((q,i)=>h.append(btn(q[1].split('|')[0],()=>ask(i),'b q')));else{const p=document.createElement('p');p.className='dim';p.textContent='He has nothing more to say.';h.append(p)}
 h.append(btn('LEAVE',closeAll,'b s'));ui()}
 function ask(i){const wi=cur,st=s.asked[wi].length,ls=lines(wi,st,i),tok=++ivTok;$('#chs').innerHTML='';$('#left').textContent='QUESTIONS LEFT: '+(2-st);let k=0;
@@ -388,11 +393,11 @@ let LK=[];
 const rot=id=>((id.split('').reduce((a,x)=>a+x.charCodeAt(0)*7,0)%9)-4)*.8;
 const card=(id,cls,h,sub)=>`<div class="card ${cls}${s.seen.includes(id)?'':' drop'}" id="${id}" tabindex="0" style="--r:${rot(id)}deg" onclick="det('${id}')" onkeydown="if(event.key==='Enter'){det('${id}');event.stopPropagation()}"><i class="pin"></i>${h}${sub?'<small>'+sub+'</small>':''}</div>`;
 function rb(){let h='',x='';LK=[];const ids=[],TG={},ps=new Set();
-for(const k in CH){const evs=s.ev.filter(i=>EV[i].ch===k);h+='<div class="col">'+card('h_'+k,'hd','<canvas id="pt_'+k+'" width="16" height="26"></canvas>'+CH[k],evs.length+' on file');ids.push('h_'+k);
+for(const k in CH){const evs=evl().filter(i=>EV[i].ch===k);h+='<div class="col">'+card('h_'+k,'hd','<canvas id="pt_'+k+'" width="16" height="26"></canvas>'+CH[k],evs.length+' on file');ids.push('h_'+k);
 evs.forEach(id=>{const e=EV[id],cid='c_'+id;h+=card(cid,'ev','<b>'+e.t+'</b>',HW[e.how]+' · '+e.s+'<br><span class="pg">P. '+e.pg+'</span>');ids.push(cid);(e.tg||[]).forEach(g=>(TG[g]=TG[g]||[]).push(cid))});h+='</div>'}
 for(const g in TG)if(TG[g].length>1){for(let j=1;j<TG[g].length;j++){const p=[TG[g][j-1],TG[g][j]],key=p.join('>');if(!ps.has(key)){ps.add(key);LK.push(p)}}
 x+=`<div class="xn"><b>LEAD:</b> ${LQ[g]}<br><span class="dim">${TG[g].map(c=>EV[c.slice(2)].t).join('  •  ')}</span></div>`}
-if(!s.ev.length)x='<div class="xn dim">The board is bare. Walk the ranch, examine the places, and question the hands.</div>';
+if(!evl().length)x='<div class="xn dim">The board is bare. Walk the ranch, examine the places, and question the hands.</div>';
 $('#cols').innerHTML=h;$('#xn').innerHTML=x;
 requestAnimationFrame(()=>{for(const k in CH)portrait($('#pt_'+k).getContext('2d'),LOOK[k]);threads();ids.forEach(i=>{if(!s.seen.includes(i))s.seen.push(i)});LK.forEach(l=>{const k=l.join('>');if(!s.seen.includes(k))s.seen.push(k)});save()})}
 function threads(){const bc=$('#bc'),svg=$('#th2'),cr=bc.getBoundingClientRect();svg.setAttribute('width',bc.scrollWidth);svg.setAttribute('height',bc.scrollHeight);let h='';
@@ -401,10 +406,10 @@ h+=`<path pathLength="1" class="${nw}" d="M${x1} ${y1} Q${(x1+x2)/2+sw} ${(y1+y2
 addEventListener('resize',()=>{if($('#bd').classList.contains('on'))threads()});
 function det(id){const p=id.split('_');let h='';
 if(p[0]==='c'){const e=EV[p[1]];h=`<h3>${e.t}</h3><p><b>WHAT HAPPENED:</b> ${e.ev}</p><p><b>INVOLVED:</b> ${e.inv}</p><p><b>SUPPLIED BY:</b> ${e.s}<br><b>HOW IT IS KNOWN:</b> ${HWL[e.how]}</p><p class="q">“${e.o}”</p><span class="pg">OF MICE AND MEN, P. ${e.pg}</span>`}
-else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${s.ev.filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' ('+EV[i].s+', '+HW[EV[i].how].toLowerCase()+')</li>').join('')||'<li>none yet</li>'}</ul>`;
+else h=`<h3>${CH[p[1]]}</h3><p>Evidence on file:</p><ul>${evl().filter(i=>EV[i].ch===p[1]).map(i=>'<li>'+EV[i].t+' ('+EV[i].s+', '+HW[EV[i].how].toLowerCase()+')</li>').join('')||'<li>none yet</li>'}</ul>`;
 $('#mdc').innerHTML=h;$('#mdc').append(btn('CLOSE',()=>$('#md').classList.remove('on')));$('#md').classList.add('on')}
 /* ---------- final case ---------- */
-function f1(){if(s.ev.length<12)return;rb();$('#bd').classList.add('on');const b=$('#fnb');b.innerHTML='';
+function f1(){if(!DEV&&s.ev.length<12)return;rb();$('#bd').classList.add('on');const b=$('#fnb');b.innerHTML='';
 b.innerHTML=`<h1 style="font-size:22px">FINAL CASE</h1><p class="big">POWER ISN'T THE SAME AS FREEDOM.</p><div class="g4">${Object.keys(CH).map(k=>`<div><b>${CH[k]}</b><br>“${QT[k]}”</div>`).join('')}</div><p class="q2">WHO HAS THE LEAST POWER?</p>`;
 Object.keys(CH).forEach(k=>b.append(btn(CH[k],()=>{s.fin=k;save();openEssay()})));b.append(document.createElement('br'),btn('BACK TO BOARD',()=>$('#fn').classList.remove('on'),'b s'));$('#fn').classList.add('on')}
 /* Paste each finished case file between the backticks. Empty = placeholder shows. */
@@ -418,7 +423,7 @@ $('#cf').textContent=CASEFILES[k]||'[PLACEHOLDER — CASE FILE: '+CH[k]+']'}
 $('#eb1').onclick=()=>{open('#bd');rb()};$('#eb2').onclick=closeAll;$('#eb3').onclick=()=>{open('#bd');f1()};
 /* ---------- input ---------- */
 addEventListener('click',e=>{audio();const b=e.target.closest('button');b&&b.blur()});
-addEventListener('keydown',e=>{audio();const k=e.key.toLowerCase(),ta=/TEXTAREA/.test(e.target.tagName);
+addEventListener('keydown',e=>{audio();devKey(e);const k=e.key.toLowerCase(),ta=/TEXTAREA/.test(e.target.tagName);
 if(ta){if(k=='escape')e.target.blur();return}
 if(k==' '||k=='enter'){if(e.target.closest&&e.target.closest('.card'))return;if(tw||dlg){e.preventDefault();adv();return}if(s.started&&!busy()){e.preventDefault();interact()}return}
 if(k=='e'&&!busy()&&s.started){interact();return}
@@ -430,4 +435,3 @@ cv.onclick=()=>interact();
 setInterval(()=>{if(s.started){s.x=P.x;s.y=P.y;save()}},3000);
 muteUI();ui();requestAnimationFrame(loop);
 </script></body></html>
-
